@@ -1,4 +1,22 @@
 type User {
   id: ID! @unique
   name: String!
+  email: String! @unique
+  password: String!
+  sessions: [Session!]! @relation(name: "SessionToUser", onDelete: CASCADE)
+  exercises: [Exercise!]! @relation(name: "ExerciseToUser", onDelete: CASCADE)
+}
+
+type Session {
+  id: ID! @unique
+  date: String!
+  user: User! @relation(name: "SessionToUser", onDelete: SET_NULL)
+  exercises: [Exercise!]! @relation(name: "ExerciseToSession", onDelete: CASCADE)
+}
+
+type Exercise {
+  id: ID! @unique
+  name: String!
+  user: User! @relation(name: "ExerciseToUser", onDelete: SET_NULL)
+  session: Session!@relation(name: "ExerciseToSession", onDelete: SET_NULL)
 }
