@@ -13,9 +13,10 @@ services:
         databases:
           default:
             connector: postgres
-            host: HOST
-            port: PORT
-            database: DATABASE
-            user: USER
-            password: PASSWORD
+            host: ${HOST}
+            port: '${PORT}'
+            database: ${DATABASE}
+            ssl: true
+            user: ${USERNAME}
+            password: ${PASSWORD}
             migrations: true
