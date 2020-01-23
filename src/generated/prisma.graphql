@@ -1,0 +1,957 @@
+# source: http://localhost:4466
+# timestamp: Thu Jan 23 2020 17:39:07 GMT+0000 (Greenwich Mean Time)
+
+type AggregateExercise {
+  count: Int!
+}
+
+type AggregateSession {
+  count: Int!
+}
+
+type AggregateUser {
+  count: Int!
+}
+
+type BatchPayload {
+  """The number of nodes that have been affected by the Batch operation."""
+  count: Long!
+}
+
+type Exercise implements Node {
+  id: ID!
+  name: String!
+  user(where: UserWhereInput): User!
+  session(where: SessionWhereInput): Session!
+}
+
+"""A connection to a list of items."""
+type ExerciseConnection {
+  """Information to aid in pagination."""
+  pageInfo: PageInfo!
+
+  """A list of edges."""
+  edges: [ExerciseEdge]!
+  aggregate: AggregateExercise!
+}
+
+input ExerciseCreateInput {
+  name: String!
+  user: UserCreateOneWithoutExercisesInput!
+  session: SessionCreateOneWithoutExercisesInput!
+}
+
+input ExerciseCreateManyWithoutSessionInput {
+  create: [ExerciseCreateWithoutSessionInput!]
+  connect: [ExerciseWhereUniqueInput!]
+}
+
+input ExerciseCreateManyWithoutUserInput {
+  create: [ExerciseCreateWithoutUserInput!]
+  connect: [ExerciseWhereUniqueInput!]
+}
+
+input ExerciseCreateWithoutSessionInput {
+  name: String!
+  user: UserCreateOneWithoutExercisesInput!
+}
+
+input ExerciseCreateWithoutUserInput {
+  name: String!
+  session: SessionCreateOneWithoutExercisesInput!
+}
+
+"""An edge in a connection."""
+type ExerciseEdge {
+  """The item at the end of the edge."""
+  node: Exercise!
+
+  """A cursor for use in pagination."""
+  cursor: String!
+}
+
+enum ExerciseOrderByInput {
+  id_ASC
+  id_DESC
+  name_ASC
+  name_DESC
+  updatedAt_ASC
+  updatedAt_DESC
+  createdAt_ASC
+  createdAt_DESC
+}
+
+type ExercisePreviousValues {
+  id: ID!
+  name: String!
+}
+
+type ExerciseSubscriptionPayload {
+  mutation: MutationType!
+  node: Exercise
+  updatedFields: [String!]
+  previousValues: ExercisePreviousValues
+}
+
+input ExerciseSubscriptionWhereInput {
+  """Logical AND on all given filters."""
+  AND: [ExerciseSubscriptionWhereInput!]
+
+  """Logical OR on all given filters."""
+  OR: [ExerciseSubscriptionWhereInput!]
+
+  """Logical NOT on all given filters combined by AND."""
+  NOT: [ExerciseSubscriptionWhereInput!]
+
+  """The subscription event gets dispatched when it's listed in mutation_in"""
+  mutation_in: [MutationType!]
+
+  """
+  The subscription event gets only dispatched when one of the updated fields names is included in this list
+  """
+  updatedFields_contains: String
+
+  """
+  The subscription event gets only dispatched when all of the field names included in this list have been updated
+  """
+  updatedFields_contains_every: [String!]
+
+  """
+  The subscription event gets only dispatched when some of the field names included in this list have been updated
+  """
+  updatedFields_contains_some: [String!]
+  node: ExerciseWhereInput
+}
+
+input ExerciseUpdateInput {
+  name: String
+  user: UserUpdateOneWithoutExercisesInput
+  session: SessionUpdateOneWithoutExercisesInput
+}
+
+input ExerciseUpdateManyWithoutSessionInput {
+  create: [ExerciseCreateWithoutSessionInput!]
+  connect: [ExerciseWhereUniqueInput!]
+  disconnect: [ExerciseWhereUniqueInput!]
+  delete: [ExerciseWhereUniqueInput!]
+  update: [ExerciseUpdateWithWhereUniqueWithoutSessionInput!]
+  upsert: [ExerciseUpsertWithWhereUniqueWithoutSessionInput!]
+}
+
+input ExerciseUpdateManyWithoutUserInput {
+  create: [ExerciseCreateWithoutUserInput!]
+  connect: [ExerciseWhereUniqueInput!]
+  disconnect: [ExerciseWhereUniqueInput!]
+  delete: [ExerciseWhereUniqueInput!]
+  update: [ExerciseUpdateWithWhereUniqueWithoutUserInput!]
+  upsert: [ExerciseUpsertWithWhereUniqueWithoutUserInput!]
+}
+
+input ExerciseUpdateWithoutSessionDataInput {
+  name: String
+  user: UserUpdateOneWithoutExercisesInput
+}
+
+input ExerciseUpdateWithoutUserDataInput {
+  name: String
+  session: SessionUpdateOneWithoutExercisesInput
+}
+
+input ExerciseUpdateWithWhereUniqueWithoutSessionInput {
+  where: ExerciseWhereUniqueInput!
+  data: ExerciseUpdateWithoutSessionDataInput!
+}
+
+input ExerciseUpdateWithWhereUniqueWithoutUserInput {
+  where: ExerciseWhereUniqueInput!
+  data: ExerciseUpdateWithoutUserDataInput!
+}
+
+input ExerciseUpsertWithWhereUniqueWithoutSessionInput {
+  where: ExerciseWhereUniqueInput!
+  update: ExerciseUpdateWithoutSessionDataInput!
+  create: ExerciseCreateWithoutSessionInput!
+}
+
+input ExerciseUpsertWithWhereUniqueWithoutUserInput {
+  where: ExerciseWhereUniqueInput!
+  update: ExerciseUpdateWithoutUserDataInput!
+  create: ExerciseCreateWithoutUserInput!
+}
+
+input ExerciseWhereInput {
+  """Logical AND on all given filters."""
+  AND: [ExerciseWhereInput!]
+
+  """Logical OR on all given filters."""
+  OR: [ExerciseWhereInput!]
+
+  """Logical NOT on all given filters combined by AND."""
+  NOT: [ExerciseWhereInput!]
+  id: ID
+
+  """All values that are not equal to given value."""
+  id_not: ID
+
+  """All values that are contained in given list."""
+  id_in: [ID!]
+
+  """All values that are not contained in given list."""
+  id_not_in: [ID!]
+
+  """All values less than the given value."""
+  id_lt: ID
+
+  """All values less than or equal the given value."""
+  id_lte: ID
+
+  """All values greater than the given value."""
+  id_gt: ID
+
+  """All values greater than or equal the given value."""
+  id_gte: ID
+
+  """All values containing the given string."""
+  id_contains: ID
+
+  """All values not containing the given string."""
+  id_not_contains: ID
+
+  """All values starting with the given string."""
+  id_starts_with: ID
+
+  """All values not starting with the given string."""
+  id_not_starts_with: ID
+
+  """All values ending with the given string."""
+  id_ends_with: ID
+
+  """All values not ending with the given string."""
+  id_not_ends_with: ID
+  name: String
+
+  """All values that are not equal to given value."""
+  name_not: String
+
+  """All values that are contained in given list."""
+  name_in: [String!]
+
+  """All values that are not contained in given list."""
+  name_not_in: [String!]
+
+  """All values less than the given value."""
+  name_lt: String
+
+  """All values less than or equal the given value."""
+  name_lte: String
+
+  """All values greater than the given value."""
+  name_gt: String
+
+  """All values greater than or equal the given value."""
+  name_gte: String
+
+  """All values containing the given string."""
+  name_contains: String
+
+  """All values not containing the given string."""
+  name_not_contains: String
+
+  """All values starting with the given string."""
+  name_starts_with: String
+
+  """All values not starting with the given string."""
+  name_not_starts_with: String
+
+  """All values ending with the given string."""
+  name_ends_with: String
+
+  """All values not ending with the given string."""
+  name_not_ends_with: String
+  user: UserWhereInput
+  session: SessionWhereInput
+}
+
+input ExerciseWhereUniqueInput {
+  id: ID
+}
+
+"""
+The `Long` scalar type represents non-fractional signed whole numeric values.
+Long can represent values between -(2^63) and 2^63 - 1.
+"""
+scalar Long
+
+type Mutation {
+  createUser(data: UserCreateInput!): User!
+  createSession(data: SessionCreateInput!): Session!
+  createExercise(data: ExerciseCreateInput!): Exercise!
+  updateUser(data: UserUpdateInput!, where: UserWhereUniqueInput!): User
+  updateSession(data: SessionUpdateInput!, where: SessionWhereUniqueInput!): Session
+  updateExercise(data: ExerciseUpdateInput!, where: ExerciseWhereUniqueInput!): Exercise
+  deleteUser(where: UserWhereUniqueInput!): User
+  deleteSession(where: SessionWhereUniqueInput!): Session
+  deleteExercise(where: ExerciseWhereUniqueInput!): Exercise
+  upsertUser(where: UserWhereUniqueInput!, create: UserCreateInput!, update: UserUpdateInput!): User!
+  upsertSession(where: SessionWhereUniqueInput!, create: SessionCreateInput!, update: SessionUpdateInput!): Session!
+  upsertExercise(where: ExerciseWhereUniqueInput!, create: ExerciseCreateInput!, update: ExerciseUpdateInput!): Exercise!
+  updateManyUsers(data: UserUpdateInput!, where: UserWhereInput): BatchPayload!
+  updateManySessions(data: SessionUpdateInput!, where: SessionWhereInput): BatchPayload!
+  updateManyExercises(data: ExerciseUpdateInput!, where: ExerciseWhereInput): BatchPayload!
+  deleteManyUsers(where: UserWhereInput): BatchPayload!
+  deleteManySessions(where: SessionWhereInput): BatchPayload!
+  deleteManyExercises(where: ExerciseWhereInput): BatchPayload!
+}
+
+enum MutationType {
+  CREATED
+  UPDATED
+  DELETED
+}
+
+"""An object with an ID"""
+interface Node {
+  """The id of the object."""
+  id: ID!
+}
+
+"""Information about pagination in a connection."""
+type PageInfo {
+  """When paginating forwards, are there more items?"""
+  hasNextPage: Boolean!
+
+  """When paginating backwards, are there more items?"""
+  hasPreviousPage: Boolean!
+
+  """When paginating backwards, the cursor to continue."""
+  startCursor: String
+
+  """When paginating forwards, the cursor to continue."""
+  endCursor: String
+}
+
+type Query {
+  users(where: UserWhereInput, orderBy: UserOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [User]!
+  sessions(where: SessionWhereInput, orderBy: SessionOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Session]!
+  exercises(where: ExerciseWhereInput, orderBy: ExerciseOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Exercise]!
+  user(where: UserWhereUniqueInput!): User
+  session(where: SessionWhereUniqueInput!): Session
+  exercise(where: ExerciseWhereUniqueInput!): Exercise
+  usersConnection(where: UserWhereInput, orderBy: UserOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): UserConnection!
+  sessionsConnection(where: SessionWhereInput, orderBy: SessionOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): SessionConnection!
+  exercisesConnection(where: ExerciseWhereInput, orderBy: ExerciseOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): ExerciseConnection!
+
+  """Fetches an object given its ID"""
+  node(
+    """The ID of an object"""
+    id: ID!
+  ): Node
+}
+
+type Session implements Node {
+  id: ID!
+  date: String!
+  user(where: UserWhereInput): User!
+  exercises(where: ExerciseWhereInput, orderBy: ExerciseOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Exercise!]
+}
+
+"""A connection to a list of items."""
+type SessionConnection {
+  """Information to aid in pagination."""
+  pageInfo: PageInfo!
+
+  """A list of edges."""
+  edges: [SessionEdge]!
+  aggregate: AggregateSession!
+}
+
+input SessionCreateInput {
+  date: String!
+  user: UserCreateOneWithoutSessionsInput!
+  exercises: ExerciseCreateManyWithoutSessionInput
+}
+
+input SessionCreateManyWithoutUserInput {
+  create: [SessionCreateWithoutUserInput!]
+  connect: [SessionWhereUniqueInput!]
+}
+
+input SessionCreateOneWithoutExercisesInput {
+  create: SessionCreateWithoutExercisesInput
+  connect: SessionWhereUniqueInput
+}
+
+input SessionCreateWithoutExercisesInput {
+  date: String!
+  user: UserCreateOneWithoutSessionsInput!
+}
+
+input SessionCreateWithoutUserInput {
+  date: String!
+  exercises: ExerciseCreateManyWithoutSessionInput
+}
+
+"""An edge in a connection."""
+type SessionEdge {
+  """The item at the end of the edge."""
+  node: Session!
+
+  """A cursor for use in pagination."""
+  cursor: String!
+}
+
+enum SessionOrderByInput {
+  id_ASC
+  id_DESC
+  date_ASC
+  date_DESC
+  updatedAt_ASC
+  updatedAt_DESC
+  createdAt_ASC
+  createdAt_DESC
+}
+
+type SessionPreviousValues {
+  id: ID!
+  date: String!
+}
+
+type SessionSubscriptionPayload {
+  mutation: MutationType!
+  node: Session
+  updatedFields: [String!]
+  previousValues: SessionPreviousValues
+}
+
+input SessionSubscriptionWhereInput {
+  """Logical AND on all given filters."""
+  AND: [SessionSubscriptionWhereInput!]
+
+  """Logical OR on all given filters."""
+  OR: [SessionSubscriptionWhereInput!]
+
+  """Logical NOT on all given filters combined by AND."""
+  NOT: [SessionSubscriptionWhereInput!]
+
+  """The subscription event gets dispatched when it's listed in mutation_in"""
+  mutation_in: [MutationType!]
+
+  """
+  The subscription event gets only dispatched when one of the updated fields names is included in this list
+  """
+  updatedFields_contains: String
+
+  """
+  The subscription event gets only dispatched when all of the field names included in this list have been updated
+  """
+  updatedFields_contains_every: [String!]
+
+  """
+  The subscription event gets only dispatched when some of the field names included in this list have been updated
+  """
+  updatedFields_contains_some: [String!]
+  node: SessionWhereInput
+}
+
+input SessionUpdateInput {
+  date: String
+  user: UserUpdateOneWithoutSessionsInput
+  exercises: ExerciseUpdateManyWithoutSessionInput
+}
+
+input SessionUpdateManyWithoutUserInput {
+  create: [SessionCreateWithoutUserInput!]
+  connect: [SessionWhereUniqueInput!]
+  disconnect: [SessionWhereUniqueInput!]
+  delete: [SessionWhereUniqueInput!]
+  update: [SessionUpdateWithWhereUniqueWithoutUserInput!]
+  upsert: [SessionUpsertWithWhereUniqueWithoutUserInput!]
+}
+
+input SessionUpdateOneWithoutExercisesInput {
+  create: SessionCreateWithoutExercisesInput
+  connect: SessionWhereUniqueInput
+  delete: Boolean
+  update: SessionUpdateWithoutExercisesDataInput
+  upsert: SessionUpsertWithoutExercisesInput
+}
+
+input SessionUpdateWithoutExercisesDataInput {
+  date: String
+  user: UserUpdateOneWithoutSessionsInput
+}
+
+input SessionUpdateWithoutUserDataInput {
+  date: String
+  exercises: ExerciseUpdateManyWithoutSessionInput
+}
+
+input SessionUpdateWithWhereUniqueWithoutUserInput {
+  where: SessionWhereUniqueInput!
+  data: SessionUpdateWithoutUserDataInput!
+}
+
+input SessionUpsertWithoutExercisesInput {
+  update: SessionUpdateWithoutExercisesDataInput!
+  create: SessionCreateWithoutExercisesInput!
+}
+
+input SessionUpsertWithWhereUniqueWithoutUserInput {
+  where: SessionWhereUniqueInput!
+  update: SessionUpdateWithoutUserDataInput!
+  create: SessionCreateWithoutUserInput!
+}
+
+input SessionWhereInput {
+  """Logical AND on all given filters."""
+  AND: [SessionWhereInput!]
+
+  """Logical OR on all given filters."""
+  OR: [SessionWhereInput!]
+
+  """Logical NOT on all given filters combined by AND."""
+  NOT: [SessionWhereInput!]
+  id: ID
+
+  """All values that are not equal to given value."""
+  id_not: ID
+
+  """All values that are contained in given list."""
+  id_in: [ID!]
+
+  """All values that are not contained in given list."""
+  id_not_in: [ID!]
+
+  """All values less than the given value."""
+  id_lt: ID
+
+  """All values less than or equal the given value."""
+  id_lte: ID
+
+  """All values greater than the given value."""
+  id_gt: ID
+
+  """All values greater than or equal the given value."""
+  id_gte: ID
+
+  """All values containing the given string."""
+  id_contains: ID
+
+  """All values not containing the given string."""
+  id_not_contains: ID
+
+  """All values starting with the given string."""
+  id_starts_with: ID
+
+  """All values not starting with the given string."""
+  id_not_starts_with: ID
+
+  """All values ending with the given string."""
+  id_ends_with: ID
+
+  """All values not ending with the given string."""
+  id_not_ends_with: ID
+  date: String
+
+  """All values that are not equal to given value."""
+  date_not: String
+
+  """All values that are contained in given list."""
+  date_in: [String!]
+
+  """All values that are not contained in given list."""
+  date_not_in: [String!]
+
+  """All values less than the given value."""
+  date_lt: String
+
+  """All values less than or equal the given value."""
+  date_lte: String
+
+  """All values greater than the given value."""
+  date_gt: String
+
+  """All values greater than or equal the given value."""
+  date_gte: String
+
+  """All values containing the given string."""
+  date_contains: String
+
+  """All values not containing the given string."""
+  date_not_contains: String
+
+  """All values starting with the given string."""
+  date_starts_with: String
+
+  """All values not starting with the given string."""
+  date_not_starts_with: String
+
+  """All values ending with the given string."""
+  date_ends_with: String
+
+  """All values not ending with the given string."""
+  date_not_ends_with: String
+  user: UserWhereInput
+  exercises_every: ExerciseWhereInput
+  exercises_some: ExerciseWhereInput
+  exercises_none: ExerciseWhereInput
+}
+
+input SessionWhereUniqueInput {
+  id: ID
+}
+
+type Subscription {
+  user(where: UserSubscriptionWhereInput): UserSubscriptionPayload
+  session(where: SessionSubscriptionWhereInput): SessionSubscriptionPayload
+  exercise(where: ExerciseSubscriptionWhereInput): ExerciseSubscriptionPayload
+}
+
+type User implements Node {
+  id: ID!
+  name: String!
+  email: String!
+  password: String!
+  sessions(where: SessionWhereInput, orderBy: SessionOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Session!]
+  exercises(where: ExerciseWhereInput, orderBy: ExerciseOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Exercise!]
+}
+
+"""A connection to a list of items."""
+type UserConnection {
+  """Information to aid in pagination."""
+  pageInfo: PageInfo!
+
+  """A list of edges."""
+  edges: [UserEdge]!
+  aggregate: AggregateUser!
+}
+
+input UserCreateInput {
+  name: String!
+  email: String!
+  password: String!
+  sessions: SessionCreateManyWithoutUserInput
+  exercises: ExerciseCreateManyWithoutUserInput
+}
+
+input UserCreateOneWithoutExercisesInput {
+  create: UserCreateWithoutExercisesInput
+  connect: UserWhereUniqueInput
+}
+
+input UserCreateOneWithoutSessionsInput {
+  create: UserCreateWithoutSessionsInput
+  connect: UserWhereUniqueInput
+}
+
+input UserCreateWithoutExercisesInput {
+  name: String!
+  email: String!
+  password: String!
+  sessions: SessionCreateManyWithoutUserInput
+}
+
+input UserCreateWithoutSessionsInput {
+  name: String!
+  email: String!
+  password: String!
+  exercises: ExerciseCreateManyWithoutUserInput
+}
+
+"""An edge in a connection."""
+type UserEdge {
+  """The item at the end of the edge."""
+  node: User!
+
+  """A cursor for use in pagination."""
+  cursor: String!
+}
+
+enum UserOrderByInput {
+  id_ASC
+  id_DESC
+  name_ASC
+  name_DESC
+  email_ASC
+  email_DESC
+  password_ASC
+  password_DESC
+  updatedAt_ASC
+  updatedAt_DESC
+  createdAt_ASC
+  createdAt_DESC
+}
+
+type UserPreviousValues {
+  id: ID!
+  name: String!
+  email: String!
+  password: String!
+}
+
+type UserSubscriptionPayload {
+  mutation: MutationType!
+  node: User
+  updatedFields: [String!]
+  previousValues: UserPreviousValues
+}
+
+input UserSubscriptionWhereInput {
+  """Logical AND on all given filters."""
+  AND: [UserSubscriptionWhereInput!]
+
+  """Logical OR on all given filters."""
+  OR: [UserSubscriptionWhereInput!]
+
+  """Logical NOT on all given filters combined by AND."""
+  NOT: [UserSubscriptionWhereInput!]
+
+  """The subscription event gets dispatched when it's listed in mutation_in"""
+  mutation_in: [MutationType!]
+
+  """
+  The subscription event gets only dispatched when one of the updated fields names is included in this list
+  """
+  updatedFields_contains: String
+
+  """
+  The subscription event gets only dispatched when all of the field names included in this list have been updated
+  """
+  updatedFields_contains_every: [String!]
+
+  """
+  The subscription event gets only dispatched when some of the field names included in this list have been updated
+  """
+  updatedFields_contains_some: [String!]
+  node: UserWhereInput
+}
+
+input UserUpdateInput {
+  name: String
+  email: String
+  password: String
+  sessions: SessionUpdateManyWithoutUserInput
+  exercises: ExerciseUpdateManyWithoutUserInput
+}
+
+input UserUpdateOneWithoutExercisesInput {
+  create: UserCreateWithoutExercisesInput
+  connect: UserWhereUniqueInput
+  delete: Boolean
+  update: UserUpdateWithoutExercisesDataInput
+  upsert: UserUpsertWithoutExercisesInput
+}
+
+input UserUpdateOneWithoutSessionsInput {
+  create: UserCreateWithoutSessionsInput
+  connect: UserWhereUniqueInput
+  delete: Boolean
+  update: UserUpdateWithoutSessionsDataInput
+  upsert: UserUpsertWithoutSessionsInput
+}
+
+input UserUpdateWithoutExercisesDataInput {
+  name: String
+  email: String
+  password: String
+  sessions: SessionUpdateManyWithoutUserInput
+}
+
+input UserUpdateWithoutSessionsDataInput {
+  name: String
+  email: String
+  password: String
+  exercises: ExerciseUpdateManyWithoutUserInput
+}
+
+input UserUpsertWithoutExercisesInput {
+  update: UserUpdateWithoutExercisesDataInput!
+  create: UserCreateWithoutExercisesInput!
+}
+
+input UserUpsertWithoutSessionsInput {
+  update: UserUpdateWithoutSessionsDataInput!
+  create: UserCreateWithoutSessionsInput!
+}
+
+input UserWhereInput {
+  """Logical AND on all given filters."""
+  AND: [UserWhereInput!]
+
+  """Logical OR on all given filters."""
+  OR: [UserWhereInput!]
+
+  """Logical NOT on all given filters combined by AND."""
+  NOT: [UserWhereInput!]
+  id: ID
+
+  """All values that are not equal to given value."""
+  id_not: ID
+
+  """All values that are contained in given list."""
+  id_in: [ID!]
+
+  """All values that are not contained in given list."""
+  id_not_in: [ID!]
+
+  """All values less than the given value."""
+  id_lt: ID
+
+  """All values less than or equal the given value."""
+  id_lte: ID
+
+  """All values greater than the given value."""
+  id_gt: ID
+
+  """All values greater than or equal the given value."""
+  id_gte: ID
+
+  """All values containing the given string."""
+  id_contains: ID
+
+  """All values not containing the given string."""
+  id_not_contains: ID
+
+  """All values starting with the given string."""
+  id_starts_with: ID
+
+  """All values not starting with the given string."""
+  id_not_starts_with: ID
+
+  """All values ending with the given string."""
+  id_ends_with: ID
+
+  """All values not ending with the given string."""
+  id_not_ends_with: ID
+  name: String
+
+  """All values that are not equal to given value."""
+  name_not: String
+
+  """All values that are contained in given list."""
+  name_in: [String!]
+
+  """All values that are not contained in given list."""
+  name_not_in: [String!]
+
+  """All values less than the given value."""
+  name_lt: String
+
+  """All values less than or equal the given value."""
+  name_lte: String
+
+  """All values greater than the given value."""
+  name_gt: String
+
+  """All values greater than or equal the given value."""
+  name_gte: String
+
+  """All values containing the given string."""
+  name_contains: String
+
+  """All values not containing the given string."""
+  name_not_contains: String
+
+  """All values starting with the given string."""
+  name_starts_with: String
+
+  """All values not starting with the given string."""
+  name_not_starts_with: String
+
+  """All values ending with the given string."""
+  name_ends_with: String
+
+  """All values not ending with the given string."""
+  name_not_ends_with: String
+  email: String
+
+  """All values that are not equal to given value."""
+  email_not: String
+
+  """All values that are contained in given list."""
+  email_in: [String!]
+
+  """All values that are not contained in given list."""
+  email_not_in: [String!]
+
+  """All values less than the given value."""
+  email_lt: String
+
+  """All values less than or equal the given value."""
+  email_lte: String
+
+  """All values greater than the given value."""
+  email_gt: String
+
+  """All values greater than or equal the given value."""
+  email_gte: String
+
+  """All values containing the given string."""
+  email_contains: String
+
+  """All values not containing the given string."""
+  email_not_contains: String
+
+  """All values starting with the given string."""
+  email_starts_with: String
+
+  """All values not starting with the given string."""
+  email_not_starts_with: String
+
+  """All values ending with the given string."""
+  email_ends_with: String
+
+  """All values not ending with the given string."""
+  email_not_ends_with: String
+  password: String
+
+  """All values that are not equal to given value."""
+  password_not: String
+
+  """All values that are contained in given list."""
+  password_in: [String!]
+
+  """All values that are not contained in given list."""
+  password_not_in: [String!]
+
+  """All values less than the given value."""
+  password_lt: String
+
+  """All values less than or equal the given value."""
+  password_lte: String
+
+  """All values greater than the given value."""
+  password_gt: String
+
+  """All values greater than or equal the given value."""
+  password_gte: String
+
+  """All values containing the given string."""
+  password_contains: String
+
+  """All values not containing the given string."""
+  password_not_contains: String
+
+  """All values starting with the given string."""
+  password_starts_with: String
+
+  """All values not starting with the given string."""
+  password_not_starts_with: String
+
+  """All values ending with the given string."""
+  password_ends_with: String
+
+  """All values not ending with the given string."""
+  password_not_ends_with: String
+  sessions_every: SessionWhereInput
+  sessions_some: SessionWhereInput
+  sessions_none: SessionWhereInput
+  exercises_every: ExerciseWhereInput
+  exercises_some: ExerciseWhereInput
+  exercises_none: ExerciseWhereInput
+}
+
+input UserWhereUniqueInput {
+  id: ID
+  email: String
+}

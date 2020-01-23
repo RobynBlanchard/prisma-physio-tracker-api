@@ -1,0 +1,100 @@
+type Query {
+  users(query: String): [User!]
+  sessions: [Session!]
+  exercises: [Exercise!]!
+}
+
+type Mutation {
+  createUser(data: CreateUserInput): AuthPayload!
+  deleteUser: User!
+  updateUser(data: updateUserInput!): User!
+  createSession(data: CreatSessionInput): Session!
+  deleteSession(id: ID!): Session!
+  updateSession(id: ID!, data: updateSessionInput!): Session!
+  createExercise(data: CreateExerciseInput): Exercise!
+  deleteExercise(id: ID!): Exercise!
+  updateExercise(id: ID!, data: updateExerciseInput): Exercise!
+  login(data: LoginUserInput!): AuthPayload!
+}
+
+type Subscription {
+  exercise(sessionId: ID!): ExerciseSubscriptionPayload!
+  session: SessionSubscriptionPayload!
+}
+
+type AuthPayload {
+  token: String!
+  user: User!
+}
+
+input CreateUserInput {
+  name: String!
+  email: String!
+  password: String!
+}
+
+input updateUserInput {
+  name: String
+  email: String
+}
+
+input CreatSessionInput {
+  date: String!
+}
+
+input updateSessionInput {
+  date: String
+}
+
+input CreateExerciseInput {
+  name: String!
+  session: ID!
+}
+
+input updateExerciseInput {
+  name: String
+}
+
+input LoginUserInput {
+  email: String!
+  password: String!
+}
+
+type User {
+  id: ID!
+  name: String!
+  email: String!
+  password: String!
+  sessions: [Session!]!
+  exercises: [Exercise!]!
+}
+
+type Session {
+  id: ID!
+  date: String!
+  user: User!
+  exercises: [Exercise!]!
+}
+
+type Exercise {
+  id: ID!
+  name: String! 
+  user: User!
+  session: Session!
+}
+
+enum MutationType {
+  CREATED
+  UPDATED
+  DELETED
+}
+
+type SessionSubscriptionPayload {
+  mutation: MutationType!
+  node: Session
+}
+
+type ExerciseSubscriptionPayload {
+  mutation: MutationType!
+  node: Exercise
+}
