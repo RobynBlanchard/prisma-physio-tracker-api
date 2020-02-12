@@ -31,8 +31,7 @@
 #### Deploy node client
 Deploy node app: `git push heroku master`
 
-
-# Run prod node server locally
+#### Run prod node server locally
 <!-- On Heroku: `npm run start` (env vars stored in Heroku) -->
 `npm run heroku-postbuild`
 
