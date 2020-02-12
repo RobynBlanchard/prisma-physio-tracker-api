@@ -1,4 +1,5 @@
 .env
 node_modules
 dist
-config
+config/dev.env
+config/prod.env
