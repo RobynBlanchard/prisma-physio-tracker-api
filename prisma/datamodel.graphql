@@ -1,22 +1,61 @@
 type User {
-  id: ID! @unique
+  id: ID! @id
   name: String!
   email: String! @unique
   password: String!
   sessions: [Session!]! @relation(name: "SessionToUser", onDelete: CASCADE)
   exercises: [Exercise!]! @relation(name: "ExerciseToUser", onDelete: CASCADE)
+  updatedAt: DateTime! @updatedAt
+  createdAt: DateTime! @createdAt
+  # sets: [Set!]! @relation(name: "SetToUser", onDelete: CASCADE)
 }
 
 type Session {
-  id: ID! @unique
-  date: String!
+  id: ID! @id
+  date: DateTime! # could add custom dateTime type
   user: User! @relation(name: "SessionToUser", onDelete: SET_NULL)
   exercises: [Exercise!]! @relation(name: "ExerciseToSession", onDelete: CASCADE)
+  updatedAt: DateTime! @updatedAt
+  createdAt: DateTime! @createdAt
 }
 
 type Exercise {
-  id: ID! @unique
+  id: ID! @id
   name: String!
   user: User! @relation(name: "ExerciseToUser", onDelete: SET_NULL)
   session: Session!@relation(name: "ExerciseToSession", onDelete: SET_NULL)
+  updatedAt: DateTime! @updatedAt
+  createdAt: DateTime! @createdAt
+  # sets: [Set!]! @relation(name: "SetToExercise", onDelete: CASCADE)
 }
+
+# interface Set {
+#   id: ID! @unique
+#   exercise: Exercise @relation(name: "SetToExercise", onDelete: SET_NULL)
+#   user: User! @relation(name: "SetToUser", onDelete: SET_NULL)
+# }
+
+
+
+# reps
+# weight
+
+# time distance
+
+
+# Exercise Interface
+# id
+# sets
+# Enum Name
+# Hamstring curls - left leg | Hamstring curls - right leg | Hamstring curl | Treadmill | Spinning Bike 
+
+# Sets Interface
+# id
+# EXercise
+# session
+# user
+
+
+# reps, weight
+# time, distance
+# etc.

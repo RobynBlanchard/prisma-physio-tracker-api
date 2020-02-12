@@ -1,23 +1,20 @@
+import '@babel/polyfill';
 import { GraphQLServer, PubSub } from 'graphql-yoga';
-import Query from './resolvers/Query';
-import Mutation from './resolvers/Mutation';
-import Subscription from './resolvers/Subscription';
 import prisma from './prisma';
+import { resolvers, fragmentReplacements } from './resolvers';
 
 const pubSub = new PubSub();
 
 const server = new GraphQLServer({
   typeDefs: './src/schema.graphql',
-  resolvers: {
-    Query,
-    Mutation,
-    Subscription
+  resolvers,
+  context(request) {
+    return { pubSub, prisma, request };
   },
-  context(req) {
-    return { pubSub, prisma, req };
-  }
+  fragmentReplacements
 });
 
-server.start(() => {
+const PORT = process.env.PORT || 4000;
+server.start({ PORT }, () => {
   console.log('Server is up');
 });

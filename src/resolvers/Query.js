@@ -1,24 +1,51 @@
-const Query = {
-  users(parent, args, { prisma }, info) {
-    const opArgs = {};
+import getUserId from '../utils/getUserId';
 
-    if (args.query) {
-      opArgs.where = {
-        OR: [{
-          name_contains: args.query
-        }, {
-          email_contains: args.query
-        }]
+// all endpoints require Auth
+
+const Query = {
+  me(parent, args, { prisma, request }, info) {
+    const userId = getUserId(request);
+
+    return prisma.query.user({
+      where: {
+        id: userId
+        // need email?
       }
+    }, info);
+  },
+  sessions(parent, args, { prisma, request }, info) {
+    const userId = getUserId(request);
+
+    const sessions = prisma.query.sessions({
+      where: {
+        user: {
+          id: userId
+        }
+      }
+    }, info);
+
+    return sessions;
+  },
+  exercises(parent, args, { prisma, request }, info) {
+    const userId = getUserId(request);
+
+    const opArgs = {
+      where: {
+        user: {
+          id: userId
+        }
+      }
+    };
+
+    if (args.sessionID) {
+      opArgs.where = {
+        session: {
+          id: args.sessionID
+        }
+      };
     }
 
-    return prisma.query.users(opArgs, info);
-  },
-  sessions(parent, args, { prisma }, info) {
-    return prisma.query.sessions(null, info)
-  },
-  exercises(parent, args, { prisma }, info) {
-    return prisma.query.exercises(null, info)
+    return prisma.query.exercises(opArgs, info);
   }
 };
 

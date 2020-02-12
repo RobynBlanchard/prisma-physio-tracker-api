@@ -1,7 +1,10 @@
+# import SessionOrderByInput, ExerciseOrderByInput from './generated/prisma.graphql'
+
 type Query {
-  users(query: String): [User!]
-  sessions: [Session!]
-  exercises: [Exercise!]!
+  me: User!
+  # users(query: String): [User!]
+  sessions(first: Int, skip: Int, after: String, orderBy: SessionOrderByInput): [Session!]
+  exercises(sessionID: ID, first: Int, skip: Int, after: String, orderBy: ExerciseOrderByInput): [Exercise!]!
 }
 
 type Mutation {

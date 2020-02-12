@@ -41,13 +41,13 @@ const Mutation = {
       token: jwt.sign({ userId: user.id }, 'secret')
     };
   },
-  async deleteUser(parent, args, { prisma, req }, info) {
-    const userId = getUserId(req);
+  async deleteUser(parent, args, { prisma, request }, info) {
+    const userId = getUserId(request);
 
     return prisma.mutation.deleteUser({ where: { id: userId } }, info);
   },
-  async updateUser(parent, args, { prisma, req }, info) {
-    const userId = getUserId(req);
+  async updateUser(parent, args, { prisma, request }, info) {
+    const userId = getUserId(request);
 
     return prisma.mutation.updateUser(
       {
@@ -59,8 +59,8 @@ const Mutation = {
       info
     );
   },
-  createSession(parent, args, { prisma, req }, info) {
-    const userId = getUserId(req);
+  createSession(parent, args, { prisma, request }, info) {
+    const userId = getUserId(request);
 
     return prisma.mutation.createSession(
       {
@@ -76,8 +76,8 @@ const Mutation = {
       info
     );
   },
-  async deleteSession(parent, args, { prisma, req }, info) {
-    const userId = getUserId(req);
+  async deleteSession(parent, args, { prisma, request }, info) {
+    const userId = getUserId(request);
     const sessionExists = await prisma.exists.Session({
       id: args.id,
       user: {
@@ -91,8 +91,8 @@ const Mutation = {
 
     return prisma.mutation.deleteSession({ where: { id: args.id } }, info);
   },
-  async updateSession(parent, args, { prisma, req }, info) {
-    const userId = getUserId(req);
+  async updateSession(parent, args, { prisma, request }, info) {
+    const userId = getUserId(request);
 
     const sessionExists = await prisma.exists.Session({
       id: args.id,
@@ -116,8 +116,8 @@ const Mutation = {
       info
     );
   },
-  createExercise(parent, args, { prisma, req }, info) {
-    const userId = getUserId(req);
+  createExercise(parent, args, { prisma, request }, info) {
+    const userId = getUserId(request);
 
     return prisma.mutation.createExercise(
       {
@@ -130,8 +130,8 @@ const Mutation = {
       info
     );
   },
-  async deleteExercise(parent, args, { prisma, req }, info) {
-    const userId = getUserId(req);
+  async deleteExercise(parent, args, { prisma, request }, info) {
+    const userId = getUserId(request);
 
     const exerciseExists = await prisma.exists.Exercise({
       id: args.id,
