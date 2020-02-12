@@ -11,7 +11,8 @@
 `npm run dev`
 
 # Run prod node server
-`npm run start`
+On Heroku: `npm run start` (env vars stored in Heroku)
+Locally: `env-cmd -f ./config/prod.env node dist/index.js`
 
 # Features
 Postgres dev and prod DBs hosted on Heroku
