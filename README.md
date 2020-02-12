@@ -25,3 +25,7 @@ Node js client application hosted on Heroku - https://lit-inlet-86349.herokuapp.
 `heroku create`
 `heroku config:set PRISMA_ENDPOINT=<prod-endpoint>`
 To list env vars: `heroku config`
+
+Prod Deployment:
+Deploy node app: `git push heroku master`
+Deploy prisma server: `prisma deploy -e ../config/prod.env`
