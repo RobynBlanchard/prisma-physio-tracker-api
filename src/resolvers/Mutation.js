@@ -27,6 +27,16 @@ const Mutation = {
     };
   },
   async createUser(parent, args, { prisma }, info) {
+    const userExists = await prisma.query.user({
+      where: {
+        email: args.data.email
+      }
+    });
+
+    if (userExists) {
+      throw new Error('User with that email already exists');
+    }
+
     const password = await hashPassword(args.data.password);
 
     const user = prisma.mutation.createUser({
