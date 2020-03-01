@@ -1,10 +1,28 @@
-# import SessionOrderByInput, ExerciseOrderByInput from './generated/prisma.graphql'
+# import SessionOrderByInput, ExerciseOrderByInput, SetOrderByInput from './generated/prisma.graphql'
 
 type Query {
   me: User!
   # users(query: String): [User!]
-  sessions(first: Int, skip: Int, after: String, orderBy: SessionOrderByInput): [Session!]
-  exercises(sessionID: ID, first: Int, skip: Int, after: String, orderBy: ExerciseOrderByInput): [Exercise!]!
+  sessions(
+    first: Int
+    skip: Int
+    after: String
+    orderBy: SessionOrderByInput
+  ): [Session!]
+  exercises(
+    sessionID: ID
+    first: Int
+    skip: Int
+    after: String
+    orderBy: ExerciseOrderByInput
+  ): [Exercise!]!
+  sets(
+    exerciseID: ID
+    first: Int
+    skip: Int
+    after: String
+    orderBy: SetOrderByInput
+  ): [Set!]!
 }
 
 type Mutation {
@@ -17,6 +35,9 @@ type Mutation {
   createExercise(data: CreateExerciseInput): Exercise!
   deleteExercise(id: ID!): Exercise!
   updateExercise(id: ID!, data: updateExerciseInput): Exercise!
+  createSet(data: CreateSetInput): Set!
+  deleteSet(id: ID!): Set!
+  updateSet(id: ID!, data: updateSetInput): Set!
   login(data: LoginUserInput!): AuthPayload!
 }
 
@@ -49,13 +70,37 @@ input updateSessionInput {
   date: String
 }
 
+enum ExerciseName {
+  LEG_PRESS
+  HAMSTRING_CURL
+  TREADMILL
+  SPINNING_BIKE
+  SQUAT
+  DEADLIFT
+}
+
 input CreateExerciseInput {
-  name: String!
+  name: ExerciseName!
   session: ID!
 }
 
 input updateExerciseInput {
   name: String
+}
+
+input updateSetInput {
+  distance: Float
+  time: Float
+  reps: Float
+  weight: Float
+}
+
+input CreateSetInput {
+  exercise: ID!
+  distance: Float
+  time: Float
+  reps: Float
+  weight: Float
 }
 
 input LoginUserInput {
@@ -81,10 +126,55 @@ type Session {
 
 type Exercise {
   id: ID!
-  name: String! 
+  name: ExerciseName!
   user: User!
   session: Session!
 }
+
+# Hack to get around prisma not implementing interfaces yet
+type Set {
+  id: ID!
+  user: User!
+  session: Session!
+  exercise: Exercise!
+
+  reps: Int
+  weight: Float
+
+  distance: Float
+  time: Float
+}
+
+# interface Set {
+#   id: ID!
+#   user: User!
+#   session: Session!
+#   exercise: Exercise!
+
+#   reps: Int
+#   weight: Float
+
+#   distance: Float
+#   time: Float
+# }
+
+# type WeightsSet implements Set {
+#   id: ID!
+#   user: User!
+#   session: Session!
+#   exercise: Exercise!
+#   reps: Int
+#   weight: Float
+# }
+
+# type TimeDistanceSet implements Set {
+#   id: ID!
+#   user: User!
+#   session: Session!
+#   exercise: Exercise!
+#   distance: Float
+#   time: Float
+# }
 
 enum MutationType {
   CREATED

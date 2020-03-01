@@ -5,57 +5,90 @@ type User {
   password: String!
   sessions: [Session!]! @relation(name: "SessionToUser", onDelete: CASCADE)
   exercises: [Exercise!]! @relation(name: "ExerciseToUser", onDelete: CASCADE)
+  sets: [Set!]! @relation(name: "SetToUser", onDelete: CASCADE)
   updatedAt: DateTime! @updatedAt
   createdAt: DateTime! @createdAt
-  # sets: [Set!]! @relation(name: "SetToUser", onDelete: CASCADE)
 }
 
 type Session {
   id: ID! @id
   date: DateTime! # could add custom dateTime type
   user: User! @relation(name: "SessionToUser", onDelete: SET_NULL)
-  exercises: [Exercise!]! @relation(name: "ExerciseToSession", onDelete: CASCADE)
+  exercises: [Exercise!]!
+    @relation(name: "ExerciseToSession", onDelete: CASCADE)
+  sets: [Set!]! @relation(name: "SetToSession", onDelete: CASCADE)
   updatedAt: DateTime! @updatedAt
   createdAt: DateTime! @createdAt
+}
+
+enum ExerciseName {
+  LEG_PRESS
+  HAMSTRING_CURL
+  TREADMILL
+  SPINNING_BIKE
+  SQUAT
+  DEADLIFT
 }
 
 type Exercise {
   id: ID! @id
-  name: String!
+  name: ExerciseName!
   user: User! @relation(name: "ExerciseToUser", onDelete: SET_NULL)
-  session: Session!@relation(name: "ExerciseToSession", onDelete: SET_NULL)
+  session: Session! @relation(name: "ExerciseToSession", onDelete: SET_NULL)
+  sets: [Set!]! @relation(name: "SetToExercise", onDelete: CASCADE)
   updatedAt: DateTime! @updatedAt
   createdAt: DateTime! @createdAt
-  # sets: [Set!]! @relation(name: "SetToExercise", onDelete: CASCADE)
+}
+
+type Set {
+  id: ID! @id
+  user: User! @relation(name: "SetToUser", onDelete: SET_NULL)
+  session: Session! @relation(name: "SetToSession", onDelete: SET_NULL)
+  exercise: Exercise! @relation(name: "SetToExercise", onDelete: SET_NULL)
+  updatedAt: DateTime! @updatedAt
+  createdAt: DateTime! @createdAt
+
+  # Custom fields WeightsSet
+  reps: Int
+  weight: Float
+
+  # Custom fields TimeDistanceSet
+  distance: Float
+  time: Float
 }
 
 # interface Set {
-#   id: ID! @unique
-#   exercise: Exercise @relation(name: "SetToExercise", onDelete: SET_NULL)
+#   id: ID! @id
 #   user: User! @relation(name: "SetToUser", onDelete: SET_NULL)
+#   session: Session! @relation(name: "SetToSession", onDelete: SET_NULL)
+#   exercise: Exercise! @relation(name: "SetToExercise", onDelete: SET_NULL)
+#   updatedAt: DateTime! @updatedAt
+#   createdAt: DateTime! @createdAt
 # }
 
+# type WeightsSet implements Set {
+#   id: ID! @id
+#   user: User! @relation(name: "SetToUser", onDelete: SET_NULL)
+#   session: Session! @relation(name: "SetToSession", onDelete: SET_NULL)
+#   exercise: Exercise! @relation(name: "SetToExercise", onDelete: SET_NULL)
+#   reps: Int
+#   weight: Float
+#   updatedAt: DateTime! @updatedAt
+#   createdAt: DateTime! @createdAt
+# }
 
+# type TimeDistanceSet implements Set {
+#   id: ID! @unique
+#   user: User! @relation(name: "SetToUser", onDelete: SET_NULL)
+#   session: Session! @relation(name: "SetToSession", onDelete: SET_NULL)
+#   exercise: Exercise! @relation(name: "SetToExercise", onDelete: SET_NULL)
+#   distance: Float
+#   time: Float
+#   updatedAt: DateTime! @updatedAt
+#   createdAt: DateTime! @createdAt
+# }
 
-# reps
-# weight
+# TODO: deploy this
+# then create node client
 
-# time distance
-
-
-# Exercise Interface
-# id
-# sets
-# Enum Name
-# Hamstring curls - left leg | Hamstring curls - right leg | Hamstring curl | Treadmill | Spinning Bike 
-
-# Sets Interface
-# id
-# EXercise
-# session
-# user
-
-
-# reps, weight
-# time, distance
-# etc.
+# TODO: enum for Exercise name

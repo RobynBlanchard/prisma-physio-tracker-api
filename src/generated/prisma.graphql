@@ -1,11 +1,15 @@
 # source: http://localhost:4466
-# timestamp: Wed Feb 12 2020 11:06:16 GMT+0000 (Greenwich Mean Time)
+# timestamp: Sun Mar 01 2020 17:06:41 GMT+0000 (Greenwich Mean Time)
 
 type AggregateExercise {
   count: Int!
 }
 
 type AggregateSession {
+  count: Int!
+}
+
+type AggregateSet {
   count: Int!
 }
 
@@ -22,9 +26,10 @@ scalar DateTime
 
 type Exercise implements Node {
   id: ID!
-  name: String!
-  user(where: UserWhereInput): User!
-  session(where: SessionWhereInput): Session!
+  name: ExerciseName!
+  user: User!
+  session: Session!
+  sets(where: SetWhereInput, orderBy: SetOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Set!]
   updatedAt: DateTime!
   createdAt: DateTime!
 }
@@ -40,9 +45,11 @@ type ExerciseConnection {
 }
 
 input ExerciseCreateInput {
-  name: String!
+  id: ID
+  name: ExerciseName!
   user: UserCreateOneWithoutExercisesInput!
   session: SessionCreateOneWithoutExercisesInput!
+  sets: SetCreateManyWithoutExerciseInput
 }
 
 input ExerciseCreateManyWithoutSessionInput {
@@ -55,14 +62,30 @@ input ExerciseCreateManyWithoutUserInput {
   connect: [ExerciseWhereUniqueInput!]
 }
 
+input ExerciseCreateOneWithoutSetsInput {
+  create: ExerciseCreateWithoutSetsInput
+  connect: ExerciseWhereUniqueInput
+}
+
 input ExerciseCreateWithoutSessionInput {
-  name: String!
+  id: ID
+  name: ExerciseName!
   user: UserCreateOneWithoutExercisesInput!
+  sets: SetCreateManyWithoutExerciseInput
+}
+
+input ExerciseCreateWithoutSetsInput {
+  id: ID
+  name: ExerciseName!
+  user: UserCreateOneWithoutExercisesInput!
+  session: SessionCreateOneWithoutExercisesInput!
 }
 
 input ExerciseCreateWithoutUserInput {
-  name: String!
+  id: ID
+  name: ExerciseName!
   session: SessionCreateOneWithoutExercisesInput!
+  sets: SetCreateManyWithoutExerciseInput
 }
 
 """An edge in a connection."""
@@ -72,6 +95,15 @@ type ExerciseEdge {
 
   """A cursor for use in pagination."""
   cursor: String!
+}
+
+enum ExerciseName {
+  LEG_PRESS
+  HAMSTRING_CURL
+  TREADMILL
+  SPINNING_BIKE
+  SQUAT
+  DEADLIFT
 }
 
 enum ExerciseOrderByInput {
@@ -87,9 +119,114 @@ enum ExerciseOrderByInput {
 
 type ExercisePreviousValues {
   id: ID!
-  name: String!
+  name: ExerciseName!
   updatedAt: DateTime!
   createdAt: DateTime!
+}
+
+input ExerciseScalarWhereInput {
+  """Logical AND on all given filters."""
+  AND: [ExerciseScalarWhereInput!]
+
+  """Logical OR on all given filters."""
+  OR: [ExerciseScalarWhereInput!]
+
+  """Logical NOT on all given filters combined by AND."""
+  NOT: [ExerciseScalarWhereInput!]
+  id: ID
+
+  """All values that are not equal to given value."""
+  id_not: ID
+
+  """All values that are contained in given list."""
+  id_in: [ID!]
+
+  """All values that are not contained in given list."""
+  id_not_in: [ID!]
+
+  """All values less than the given value."""
+  id_lt: ID
+
+  """All values less than or equal the given value."""
+  id_lte: ID
+
+  """All values greater than the given value."""
+  id_gt: ID
+
+  """All values greater than or equal the given value."""
+  id_gte: ID
+
+  """All values containing the given string."""
+  id_contains: ID
+
+  """All values not containing the given string."""
+  id_not_contains: ID
+
+  """All values starting with the given string."""
+  id_starts_with: ID
+
+  """All values not starting with the given string."""
+  id_not_starts_with: ID
+
+  """All values ending with the given string."""
+  id_ends_with: ID
+
+  """All values not ending with the given string."""
+  id_not_ends_with: ID
+  name: ExerciseName
+
+  """All values that are not equal to given value."""
+  name_not: ExerciseName
+
+  """All values that are contained in given list."""
+  name_in: [ExerciseName!]
+
+  """All values that are not contained in given list."""
+  name_not_in: [ExerciseName!]
+  updatedAt: DateTime
+
+  """All values that are not equal to given value."""
+  updatedAt_not: DateTime
+
+  """All values that are contained in given list."""
+  updatedAt_in: [DateTime!]
+
+  """All values that are not contained in given list."""
+  updatedAt_not_in: [DateTime!]
+
+  """All values less than the given value."""
+  updatedAt_lt: DateTime
+
+  """All values less than or equal the given value."""
+  updatedAt_lte: DateTime
+
+  """All values greater than the given value."""
+  updatedAt_gt: DateTime
+
+  """All values greater than or equal the given value."""
+  updatedAt_gte: DateTime
+  createdAt: DateTime
+
+  """All values that are not equal to given value."""
+  createdAt_not: DateTime
+
+  """All values that are contained in given list."""
+  createdAt_in: [DateTime!]
+
+  """All values that are not contained in given list."""
+  createdAt_not_in: [DateTime!]
+
+  """All values less than the given value."""
+  createdAt_lt: DateTime
+
+  """All values less than or equal the given value."""
+  createdAt_lte: DateTime
+
+  """All values greater than the given value."""
+  createdAt_gt: DateTime
+
+  """All values greater than or equal the given value."""
+  createdAt_gte: DateTime
 }
 
 type ExerciseSubscriptionPayload {
@@ -130,37 +267,72 @@ input ExerciseSubscriptionWhereInput {
 }
 
 input ExerciseUpdateInput {
-  name: String
-  user: UserUpdateOneWithoutExercisesInput
-  session: SessionUpdateOneWithoutExercisesInput
+  name: ExerciseName
+  user: UserUpdateOneRequiredWithoutExercisesInput
+  session: SessionUpdateOneRequiredWithoutExercisesInput
+  sets: SetUpdateManyWithoutExerciseInput
+}
+
+input ExerciseUpdateManyDataInput {
+  name: ExerciseName
+}
+
+input ExerciseUpdateManyMutationInput {
+  name: ExerciseName
 }
 
 input ExerciseUpdateManyWithoutSessionInput {
   create: [ExerciseCreateWithoutSessionInput!]
   connect: [ExerciseWhereUniqueInput!]
+  set: [ExerciseWhereUniqueInput!]
   disconnect: [ExerciseWhereUniqueInput!]
   delete: [ExerciseWhereUniqueInput!]
   update: [ExerciseUpdateWithWhereUniqueWithoutSessionInput!]
+  updateMany: [ExerciseUpdateManyWithWhereNestedInput!]
+  deleteMany: [ExerciseScalarWhereInput!]
   upsert: [ExerciseUpsertWithWhereUniqueWithoutSessionInput!]
 }
 
 input ExerciseUpdateManyWithoutUserInput {
   create: [ExerciseCreateWithoutUserInput!]
   connect: [ExerciseWhereUniqueInput!]
+  set: [ExerciseWhereUniqueInput!]
   disconnect: [ExerciseWhereUniqueInput!]
   delete: [ExerciseWhereUniqueInput!]
   update: [ExerciseUpdateWithWhereUniqueWithoutUserInput!]
+  updateMany: [ExerciseUpdateManyWithWhereNestedInput!]
+  deleteMany: [ExerciseScalarWhereInput!]
   upsert: [ExerciseUpsertWithWhereUniqueWithoutUserInput!]
 }
 
+input ExerciseUpdateManyWithWhereNestedInput {
+  where: ExerciseScalarWhereInput!
+  data: ExerciseUpdateManyDataInput!
+}
+
+input ExerciseUpdateOneRequiredWithoutSetsInput {
+  create: ExerciseCreateWithoutSetsInput
+  connect: ExerciseWhereUniqueInput
+  update: ExerciseUpdateWithoutSetsDataInput
+  upsert: ExerciseUpsertWithoutSetsInput
+}
+
 input ExerciseUpdateWithoutSessionDataInput {
-  name: String
-  user: UserUpdateOneWithoutExercisesInput
+  name: ExerciseName
+  user: UserUpdateOneRequiredWithoutExercisesInput
+  sets: SetUpdateManyWithoutExerciseInput
+}
+
+input ExerciseUpdateWithoutSetsDataInput {
+  name: ExerciseName
+  user: UserUpdateOneRequiredWithoutExercisesInput
+  session: SessionUpdateOneRequiredWithoutExercisesInput
 }
 
 input ExerciseUpdateWithoutUserDataInput {
-  name: String
-  session: SessionUpdateOneWithoutExercisesInput
+  name: ExerciseName
+  session: SessionUpdateOneRequiredWithoutExercisesInput
+  sets: SetUpdateManyWithoutExerciseInput
 }
 
 input ExerciseUpdateWithWhereUniqueWithoutSessionInput {
@@ -171,6 +343,11 @@ input ExerciseUpdateWithWhereUniqueWithoutSessionInput {
 input ExerciseUpdateWithWhereUniqueWithoutUserInput {
   where: ExerciseWhereUniqueInput!
   data: ExerciseUpdateWithoutUserDataInput!
+}
+
+input ExerciseUpsertWithoutSetsInput {
+  update: ExerciseUpdateWithoutSetsDataInput!
+  create: ExerciseCreateWithoutSetsInput!
 }
 
 input ExerciseUpsertWithWhereUniqueWithoutSessionInput {
@@ -234,46 +411,16 @@ input ExerciseWhereInput {
 
   """All values not ending with the given string."""
   id_not_ends_with: ID
-  name: String
+  name: ExerciseName
 
   """All values that are not equal to given value."""
-  name_not: String
+  name_not: ExerciseName
 
   """All values that are contained in given list."""
-  name_in: [String!]
+  name_in: [ExerciseName!]
 
   """All values that are not contained in given list."""
-  name_not_in: [String!]
-
-  """All values less than the given value."""
-  name_lt: String
-
-  """All values less than or equal the given value."""
-  name_lte: String
-
-  """All values greater than the given value."""
-  name_gt: String
-
-  """All values greater than or equal the given value."""
-  name_gte: String
-
-  """All values containing the given string."""
-  name_contains: String
-
-  """All values not containing the given string."""
-  name_not_contains: String
-
-  """All values starting with the given string."""
-  name_starts_with: String
-
-  """All values not starting with the given string."""
-  name_not_starts_with: String
-
-  """All values ending with the given string."""
-  name_ends_with: String
-
-  """All values not ending with the given string."""
-  name_not_ends_with: String
+  name_not_in: [ExerciseName!]
   updatedAt: DateTime
 
   """All values that are not equal to given value."""
@@ -320,6 +467,9 @@ input ExerciseWhereInput {
   createdAt_gte: DateTime
   user: UserWhereInput
   session: SessionWhereInput
+  sets_every: SetWhereInput
+  sets_some: SetWhereInput
+  sets_none: SetWhereInput
 }
 
 input ExerciseWhereUniqueInput {
@@ -336,21 +486,27 @@ type Mutation {
   createUser(data: UserCreateInput!): User!
   createSession(data: SessionCreateInput!): Session!
   createExercise(data: ExerciseCreateInput!): Exercise!
+  createSet(data: SetCreateInput!): Set!
   updateUser(data: UserUpdateInput!, where: UserWhereUniqueInput!): User
   updateSession(data: SessionUpdateInput!, where: SessionWhereUniqueInput!): Session
   updateExercise(data: ExerciseUpdateInput!, where: ExerciseWhereUniqueInput!): Exercise
+  updateSet(data: SetUpdateInput!, where: SetWhereUniqueInput!): Set
   deleteUser(where: UserWhereUniqueInput!): User
   deleteSession(where: SessionWhereUniqueInput!): Session
   deleteExercise(where: ExerciseWhereUniqueInput!): Exercise
+  deleteSet(where: SetWhereUniqueInput!): Set
   upsertUser(where: UserWhereUniqueInput!, create: UserCreateInput!, update: UserUpdateInput!): User!
   upsertSession(where: SessionWhereUniqueInput!, create: SessionCreateInput!, update: SessionUpdateInput!): Session!
   upsertExercise(where: ExerciseWhereUniqueInput!, create: ExerciseCreateInput!, update: ExerciseUpdateInput!): Exercise!
-  updateManyUsers(data: UserUpdateInput!, where: UserWhereInput): BatchPayload!
-  updateManySessions(data: SessionUpdateInput!, where: SessionWhereInput): BatchPayload!
-  updateManyExercises(data: ExerciseUpdateInput!, where: ExerciseWhereInput): BatchPayload!
+  upsertSet(where: SetWhereUniqueInput!, create: SetCreateInput!, update: SetUpdateInput!): Set!
+  updateManyUsers(data: UserUpdateManyMutationInput!, where: UserWhereInput): BatchPayload!
+  updateManySessions(data: SessionUpdateManyMutationInput!, where: SessionWhereInput): BatchPayload!
+  updateManyExercises(data: ExerciseUpdateManyMutationInput!, where: ExerciseWhereInput): BatchPayload!
+  updateManySets(data: SetUpdateManyMutationInput!, where: SetWhereInput): BatchPayload!
   deleteManyUsers(where: UserWhereInput): BatchPayload!
   deleteManySessions(where: SessionWhereInput): BatchPayload!
   deleteManyExercises(where: ExerciseWhereInput): BatchPayload!
+  deleteManySets(where: SetWhereInput): BatchPayload!
 }
 
 enum MutationType {
@@ -384,12 +540,15 @@ type Query {
   users(where: UserWhereInput, orderBy: UserOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [User]!
   sessions(where: SessionWhereInput, orderBy: SessionOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Session]!
   exercises(where: ExerciseWhereInput, orderBy: ExerciseOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Exercise]!
+  sets(where: SetWhereInput, orderBy: SetOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Set]!
   user(where: UserWhereUniqueInput!): User
   session(where: SessionWhereUniqueInput!): Session
   exercise(where: ExerciseWhereUniqueInput!): Exercise
+  set(where: SetWhereUniqueInput!): Set
   usersConnection(where: UserWhereInput, orderBy: UserOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): UserConnection!
   sessionsConnection(where: SessionWhereInput, orderBy: SessionOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): SessionConnection!
   exercisesConnection(where: ExerciseWhereInput, orderBy: ExerciseOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): ExerciseConnection!
+  setsConnection(where: SetWhereInput, orderBy: SetOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): SetConnection!
 
   """Fetches an object given its ID"""
   node(
@@ -401,8 +560,9 @@ type Query {
 type Session implements Node {
   id: ID!
   date: DateTime!
-  user(where: UserWhereInput): User!
+  user: User!
   exercises(where: ExerciseWhereInput, orderBy: ExerciseOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Exercise!]
+  sets(where: SetWhereInput, orderBy: SetOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Set!]
   updatedAt: DateTime!
   createdAt: DateTime!
 }
@@ -418,9 +578,11 @@ type SessionConnection {
 }
 
 input SessionCreateInput {
+  id: ID
   date: DateTime!
   user: UserCreateOneWithoutSessionsInput!
   exercises: ExerciseCreateManyWithoutSessionInput
+  sets: SetCreateManyWithoutSessionInput
 }
 
 input SessionCreateManyWithoutUserInput {
@@ -433,14 +595,30 @@ input SessionCreateOneWithoutExercisesInput {
   connect: SessionWhereUniqueInput
 }
 
+input SessionCreateOneWithoutSetsInput {
+  create: SessionCreateWithoutSetsInput
+  connect: SessionWhereUniqueInput
+}
+
 input SessionCreateWithoutExercisesInput {
+  id: ID
   date: DateTime!
   user: UserCreateOneWithoutSessionsInput!
+  sets: SetCreateManyWithoutSessionInput
+}
+
+input SessionCreateWithoutSetsInput {
+  id: ID
+  date: DateTime!
+  user: UserCreateOneWithoutSessionsInput!
+  exercises: ExerciseCreateManyWithoutSessionInput
 }
 
 input SessionCreateWithoutUserInput {
+  id: ID
   date: DateTime!
   exercises: ExerciseCreateManyWithoutSessionInput
+  sets: SetCreateManyWithoutSessionInput
 }
 
 """An edge in a connection."""
@@ -468,6 +646,123 @@ type SessionPreviousValues {
   date: DateTime!
   updatedAt: DateTime!
   createdAt: DateTime!
+}
+
+input SessionScalarWhereInput {
+  """Logical AND on all given filters."""
+  AND: [SessionScalarWhereInput!]
+
+  """Logical OR on all given filters."""
+  OR: [SessionScalarWhereInput!]
+
+  """Logical NOT on all given filters combined by AND."""
+  NOT: [SessionScalarWhereInput!]
+  id: ID
+
+  """All values that are not equal to given value."""
+  id_not: ID
+
+  """All values that are contained in given list."""
+  id_in: [ID!]
+
+  """All values that are not contained in given list."""
+  id_not_in: [ID!]
+
+  """All values less than the given value."""
+  id_lt: ID
+
+  """All values less than or equal the given value."""
+  id_lte: ID
+
+  """All values greater than the given value."""
+  id_gt: ID
+
+  """All values greater than or equal the given value."""
+  id_gte: ID
+
+  """All values containing the given string."""
+  id_contains: ID
+
+  """All values not containing the given string."""
+  id_not_contains: ID
+
+  """All values starting with the given string."""
+  id_starts_with: ID
+
+  """All values not starting with the given string."""
+  id_not_starts_with: ID
+
+  """All values ending with the given string."""
+  id_ends_with: ID
+
+  """All values not ending with the given string."""
+  id_not_ends_with: ID
+  date: DateTime
+
+  """All values that are not equal to given value."""
+  date_not: DateTime
+
+  """All values that are contained in given list."""
+  date_in: [DateTime!]
+
+  """All values that are not contained in given list."""
+  date_not_in: [DateTime!]
+
+  """All values less than the given value."""
+  date_lt: DateTime
+
+  """All values less than or equal the given value."""
+  date_lte: DateTime
+
+  """All values greater than the given value."""
+  date_gt: DateTime
+
+  """All values greater than or equal the given value."""
+  date_gte: DateTime
+  updatedAt: DateTime
+
+  """All values that are not equal to given value."""
+  updatedAt_not: DateTime
+
+  """All values that are contained in given list."""
+  updatedAt_in: [DateTime!]
+
+  """All values that are not contained in given list."""
+  updatedAt_not_in: [DateTime!]
+
+  """All values less than the given value."""
+  updatedAt_lt: DateTime
+
+  """All values less than or equal the given value."""
+  updatedAt_lte: DateTime
+
+  """All values greater than the given value."""
+  updatedAt_gt: DateTime
+
+  """All values greater than or equal the given value."""
+  updatedAt_gte: DateTime
+  createdAt: DateTime
+
+  """All values that are not equal to given value."""
+  createdAt_not: DateTime
+
+  """All values that are contained in given list."""
+  createdAt_in: [DateTime!]
+
+  """All values that are not contained in given list."""
+  createdAt_not_in: [DateTime!]
+
+  """All values less than the given value."""
+  createdAt_lt: DateTime
+
+  """All values less than or equal the given value."""
+  createdAt_lte: DateTime
+
+  """All values greater than the given value."""
+  createdAt_gt: DateTime
+
+  """All values greater than or equal the given value."""
+  createdAt_gte: DateTime
 }
 
 type SessionSubscriptionPayload {
@@ -509,35 +804,66 @@ input SessionSubscriptionWhereInput {
 
 input SessionUpdateInput {
   date: DateTime
-  user: UserUpdateOneWithoutSessionsInput
+  user: UserUpdateOneRequiredWithoutSessionsInput
   exercises: ExerciseUpdateManyWithoutSessionInput
+  sets: SetUpdateManyWithoutSessionInput
+}
+
+input SessionUpdateManyDataInput {
+  date: DateTime
+}
+
+input SessionUpdateManyMutationInput {
+  date: DateTime
 }
 
 input SessionUpdateManyWithoutUserInput {
   create: [SessionCreateWithoutUserInput!]
   connect: [SessionWhereUniqueInput!]
+  set: [SessionWhereUniqueInput!]
   disconnect: [SessionWhereUniqueInput!]
   delete: [SessionWhereUniqueInput!]
   update: [SessionUpdateWithWhereUniqueWithoutUserInput!]
+  updateMany: [SessionUpdateManyWithWhereNestedInput!]
+  deleteMany: [SessionScalarWhereInput!]
   upsert: [SessionUpsertWithWhereUniqueWithoutUserInput!]
 }
 
-input SessionUpdateOneWithoutExercisesInput {
+input SessionUpdateManyWithWhereNestedInput {
+  where: SessionScalarWhereInput!
+  data: SessionUpdateManyDataInput!
+}
+
+input SessionUpdateOneRequiredWithoutExercisesInput {
   create: SessionCreateWithoutExercisesInput
   connect: SessionWhereUniqueInput
-  delete: Boolean
   update: SessionUpdateWithoutExercisesDataInput
   upsert: SessionUpsertWithoutExercisesInput
 }
 
+input SessionUpdateOneRequiredWithoutSetsInput {
+  create: SessionCreateWithoutSetsInput
+  connect: SessionWhereUniqueInput
+  update: SessionUpdateWithoutSetsDataInput
+  upsert: SessionUpsertWithoutSetsInput
+}
+
 input SessionUpdateWithoutExercisesDataInput {
   date: DateTime
-  user: UserUpdateOneWithoutSessionsInput
+  user: UserUpdateOneRequiredWithoutSessionsInput
+  sets: SetUpdateManyWithoutSessionInput
+}
+
+input SessionUpdateWithoutSetsDataInput {
+  date: DateTime
+  user: UserUpdateOneRequiredWithoutSessionsInput
+  exercises: ExerciseUpdateManyWithoutSessionInput
 }
 
 input SessionUpdateWithoutUserDataInput {
   date: DateTime
   exercises: ExerciseUpdateManyWithoutSessionInput
+  sets: SetUpdateManyWithoutSessionInput
 }
 
 input SessionUpdateWithWhereUniqueWithoutUserInput {
@@ -548,6 +874,11 @@ input SessionUpdateWithWhereUniqueWithoutUserInput {
 input SessionUpsertWithoutExercisesInput {
   update: SessionUpdateWithoutExercisesDataInput!
   create: SessionCreateWithoutExercisesInput!
+}
+
+input SessionUpsertWithoutSetsInput {
+  update: SessionUpdateWithoutSetsDataInput!
+  create: SessionCreateWithoutSetsInput!
 }
 
 input SessionUpsertWithWhereUniqueWithoutUserInput {
@@ -675,9 +1006,662 @@ input SessionWhereInput {
   exercises_every: ExerciseWhereInput
   exercises_some: ExerciseWhereInput
   exercises_none: ExerciseWhereInput
+  sets_every: SetWhereInput
+  sets_some: SetWhereInput
+  sets_none: SetWhereInput
 }
 
 input SessionWhereUniqueInput {
+  id: ID
+}
+
+type Set implements Node {
+  id: ID!
+  user: User!
+  session: Session!
+  exercise: Exercise!
+  updatedAt: DateTime!
+  createdAt: DateTime!
+  reps: Int
+  weight: Float
+  distance: Float
+  time: Float
+}
+
+"""A connection to a list of items."""
+type SetConnection {
+  """Information to aid in pagination."""
+  pageInfo: PageInfo!
+
+  """A list of edges."""
+  edges: [SetEdge]!
+  aggregate: AggregateSet!
+}
+
+input SetCreateInput {
+  id: ID
+  reps: Int
+  weight: Float
+  distance: Float
+  time: Float
+  user: UserCreateOneWithoutSetsInput!
+  session: SessionCreateOneWithoutSetsInput!
+  exercise: ExerciseCreateOneWithoutSetsInput!
+}
+
+input SetCreateManyWithoutExerciseInput {
+  create: [SetCreateWithoutExerciseInput!]
+  connect: [SetWhereUniqueInput!]
+}
+
+input SetCreateManyWithoutSessionInput {
+  create: [SetCreateWithoutSessionInput!]
+  connect: [SetWhereUniqueInput!]
+}
+
+input SetCreateManyWithoutUserInput {
+  create: [SetCreateWithoutUserInput!]
+  connect: [SetWhereUniqueInput!]
+}
+
+input SetCreateWithoutExerciseInput {
+  id: ID
+  reps: Int
+  weight: Float
+  distance: Float
+  time: Float
+  user: UserCreateOneWithoutSetsInput!
+  session: SessionCreateOneWithoutSetsInput!
+}
+
+input SetCreateWithoutSessionInput {
+  id: ID
+  reps: Int
+  weight: Float
+  distance: Float
+  time: Float
+  user: UserCreateOneWithoutSetsInput!
+  exercise: ExerciseCreateOneWithoutSetsInput!
+}
+
+input SetCreateWithoutUserInput {
+  id: ID
+  reps: Int
+  weight: Float
+  distance: Float
+  time: Float
+  session: SessionCreateOneWithoutSetsInput!
+  exercise: ExerciseCreateOneWithoutSetsInput!
+}
+
+"""An edge in a connection."""
+type SetEdge {
+  """The item at the end of the edge."""
+  node: Set!
+
+  """A cursor for use in pagination."""
+  cursor: String!
+}
+
+enum SetOrderByInput {
+  id_ASC
+  id_DESC
+  updatedAt_ASC
+  updatedAt_DESC
+  createdAt_ASC
+  createdAt_DESC
+  reps_ASC
+  reps_DESC
+  weight_ASC
+  weight_DESC
+  distance_ASC
+  distance_DESC
+  time_ASC
+  time_DESC
+}
+
+type SetPreviousValues {
+  id: ID!
+  updatedAt: DateTime!
+  createdAt: DateTime!
+  reps: Int
+  weight: Float
+  distance: Float
+  time: Float
+}
+
+input SetScalarWhereInput {
+  """Logical AND on all given filters."""
+  AND: [SetScalarWhereInput!]
+
+  """Logical OR on all given filters."""
+  OR: [SetScalarWhereInput!]
+
+  """Logical NOT on all given filters combined by AND."""
+  NOT: [SetScalarWhereInput!]
+  id: ID
+
+  """All values that are not equal to given value."""
+  id_not: ID
+
+  """All values that are contained in given list."""
+  id_in: [ID!]
+
+  """All values that are not contained in given list."""
+  id_not_in: [ID!]
+
+  """All values less than the given value."""
+  id_lt: ID
+
+  """All values less than or equal the given value."""
+  id_lte: ID
+
+  """All values greater than the given value."""
+  id_gt: ID
+
+  """All values greater than or equal the given value."""
+  id_gte: ID
+
+  """All values containing the given string."""
+  id_contains: ID
+
+  """All values not containing the given string."""
+  id_not_contains: ID
+
+  """All values starting with the given string."""
+  id_starts_with: ID
+
+  """All values not starting with the given string."""
+  id_not_starts_with: ID
+
+  """All values ending with the given string."""
+  id_ends_with: ID
+
+  """All values not ending with the given string."""
+  id_not_ends_with: ID
+  updatedAt: DateTime
+
+  """All values that are not equal to given value."""
+  updatedAt_not: DateTime
+
+  """All values that are contained in given list."""
+  updatedAt_in: [DateTime!]
+
+  """All values that are not contained in given list."""
+  updatedAt_not_in: [DateTime!]
+
+  """All values less than the given value."""
+  updatedAt_lt: DateTime
+
+  """All values less than or equal the given value."""
+  updatedAt_lte: DateTime
+
+  """All values greater than the given value."""
+  updatedAt_gt: DateTime
+
+  """All values greater than or equal the given value."""
+  updatedAt_gte: DateTime
+  createdAt: DateTime
+
+  """All values that are not equal to given value."""
+  createdAt_not: DateTime
+
+  """All values that are contained in given list."""
+  createdAt_in: [DateTime!]
+
+  """All values that are not contained in given list."""
+  createdAt_not_in: [DateTime!]
+
+  """All values less than the given value."""
+  createdAt_lt: DateTime
+
+  """All values less than or equal the given value."""
+  createdAt_lte: DateTime
+
+  """All values greater than the given value."""
+  createdAt_gt: DateTime
+
+  """All values greater than or equal the given value."""
+  createdAt_gte: DateTime
+  reps: Int
+
+  """All values that are not equal to given value."""
+  reps_not: Int
+
+  """All values that are contained in given list."""
+  reps_in: [Int!]
+
+  """All values that are not contained in given list."""
+  reps_not_in: [Int!]
+
+  """All values less than the given value."""
+  reps_lt: Int
+
+  """All values less than or equal the given value."""
+  reps_lte: Int
+
+  """All values greater than the given value."""
+  reps_gt: Int
+
+  """All values greater than or equal the given value."""
+  reps_gte: Int
+  weight: Float
+
+  """All values that are not equal to given value."""
+  weight_not: Float
+
+  """All values that are contained in given list."""
+  weight_in: [Float!]
+
+  """All values that are not contained in given list."""
+  weight_not_in: [Float!]
+
+  """All values less than the given value."""
+  weight_lt: Float
+
+  """All values less than or equal the given value."""
+  weight_lte: Float
+
+  """All values greater than the given value."""
+  weight_gt: Float
+
+  """All values greater than or equal the given value."""
+  weight_gte: Float
+  distance: Float
+
+  """All values that are not equal to given value."""
+  distance_not: Float
+
+  """All values that are contained in given list."""
+  distance_in: [Float!]
+
+  """All values that are not contained in given list."""
+  distance_not_in: [Float!]
+
+  """All values less than the given value."""
+  distance_lt: Float
+
+  """All values less than or equal the given value."""
+  distance_lte: Float
+
+  """All values greater than the given value."""
+  distance_gt: Float
+
+  """All values greater than or equal the given value."""
+  distance_gte: Float
+  time: Float
+
+  """All values that are not equal to given value."""
+  time_not: Float
+
+  """All values that are contained in given list."""
+  time_in: [Float!]
+
+  """All values that are not contained in given list."""
+  time_not_in: [Float!]
+
+  """All values less than the given value."""
+  time_lt: Float
+
+  """All values less than or equal the given value."""
+  time_lte: Float
+
+  """All values greater than the given value."""
+  time_gt: Float
+
+  """All values greater than or equal the given value."""
+  time_gte: Float
+}
+
+type SetSubscriptionPayload {
+  mutation: MutationType!
+  node: Set
+  updatedFields: [String!]
+  previousValues: SetPreviousValues
+}
+
+input SetSubscriptionWhereInput {
+  """Logical AND on all given filters."""
+  AND: [SetSubscriptionWhereInput!]
+
+  """Logical OR on all given filters."""
+  OR: [SetSubscriptionWhereInput!]
+
+  """Logical NOT on all given filters combined by AND."""
+  NOT: [SetSubscriptionWhereInput!]
+
+  """The subscription event gets dispatched when it's listed in mutation_in"""
+  mutation_in: [MutationType!]
+
+  """
+  The subscription event gets only dispatched when one of the updated fields names is included in this list
+  """
+  updatedFields_contains: String
+
+  """
+  The subscription event gets only dispatched when all of the field names included in this list have been updated
+  """
+  updatedFields_contains_every: [String!]
+
+  """
+  The subscription event gets only dispatched when some of the field names included in this list have been updated
+  """
+  updatedFields_contains_some: [String!]
+  node: SetWhereInput
+}
+
+input SetUpdateInput {
+  reps: Int
+  weight: Float
+  distance: Float
+  time: Float
+  user: UserUpdateOneRequiredWithoutSetsInput
+  session: SessionUpdateOneRequiredWithoutSetsInput
+  exercise: ExerciseUpdateOneRequiredWithoutSetsInput
+}
+
+input SetUpdateManyDataInput {
+  reps: Int
+  weight: Float
+  distance: Float
+  time: Float
+}
+
+input SetUpdateManyMutationInput {
+  reps: Int
+  weight: Float
+  distance: Float
+  time: Float
+}
+
+input SetUpdateManyWithoutExerciseInput {
+  create: [SetCreateWithoutExerciseInput!]
+  connect: [SetWhereUniqueInput!]
+  set: [SetWhereUniqueInput!]
+  disconnect: [SetWhereUniqueInput!]
+  delete: [SetWhereUniqueInput!]
+  update: [SetUpdateWithWhereUniqueWithoutExerciseInput!]
+  updateMany: [SetUpdateManyWithWhereNestedInput!]
+  deleteMany: [SetScalarWhereInput!]
+  upsert: [SetUpsertWithWhereUniqueWithoutExerciseInput!]
+}
+
+input SetUpdateManyWithoutSessionInput {
+  create: [SetCreateWithoutSessionInput!]
+  connect: [SetWhereUniqueInput!]
+  set: [SetWhereUniqueInput!]
+  disconnect: [SetWhereUniqueInput!]
+  delete: [SetWhereUniqueInput!]
+  update: [SetUpdateWithWhereUniqueWithoutSessionInput!]
+  updateMany: [SetUpdateManyWithWhereNestedInput!]
+  deleteMany: [SetScalarWhereInput!]
+  upsert: [SetUpsertWithWhereUniqueWithoutSessionInput!]
+}
+
+input SetUpdateManyWithoutUserInput {
+  create: [SetCreateWithoutUserInput!]
+  connect: [SetWhereUniqueInput!]
+  set: [SetWhereUniqueInput!]
+  disconnect: [SetWhereUniqueInput!]
+  delete: [SetWhereUniqueInput!]
+  update: [SetUpdateWithWhereUniqueWithoutUserInput!]
+  updateMany: [SetUpdateManyWithWhereNestedInput!]
+  deleteMany: [SetScalarWhereInput!]
+  upsert: [SetUpsertWithWhereUniqueWithoutUserInput!]
+}
+
+input SetUpdateManyWithWhereNestedInput {
+  where: SetScalarWhereInput!
+  data: SetUpdateManyDataInput!
+}
+
+input SetUpdateWithoutExerciseDataInput {
+  reps: Int
+  weight: Float
+  distance: Float
+  time: Float
+  user: UserUpdateOneRequiredWithoutSetsInput
+  session: SessionUpdateOneRequiredWithoutSetsInput
+}
+
+input SetUpdateWithoutSessionDataInput {
+  reps: Int
+  weight: Float
+  distance: Float
+  time: Float
+  user: UserUpdateOneRequiredWithoutSetsInput
+  exercise: ExerciseUpdateOneRequiredWithoutSetsInput
+}
+
+input SetUpdateWithoutUserDataInput {
+  reps: Int
+  weight: Float
+  distance: Float
+  time: Float
+  session: SessionUpdateOneRequiredWithoutSetsInput
+  exercise: ExerciseUpdateOneRequiredWithoutSetsInput
+}
+
+input SetUpdateWithWhereUniqueWithoutExerciseInput {
+  where: SetWhereUniqueInput!
+  data: SetUpdateWithoutExerciseDataInput!
+}
+
+input SetUpdateWithWhereUniqueWithoutSessionInput {
+  where: SetWhereUniqueInput!
+  data: SetUpdateWithoutSessionDataInput!
+}
+
+input SetUpdateWithWhereUniqueWithoutUserInput {
+  where: SetWhereUniqueInput!
+  data: SetUpdateWithoutUserDataInput!
+}
+
+input SetUpsertWithWhereUniqueWithoutExerciseInput {
+  where: SetWhereUniqueInput!
+  update: SetUpdateWithoutExerciseDataInput!
+  create: SetCreateWithoutExerciseInput!
+}
+
+input SetUpsertWithWhereUniqueWithoutSessionInput {
+  where: SetWhereUniqueInput!
+  update: SetUpdateWithoutSessionDataInput!
+  create: SetCreateWithoutSessionInput!
+}
+
+input SetUpsertWithWhereUniqueWithoutUserInput {
+  where: SetWhereUniqueInput!
+  update: SetUpdateWithoutUserDataInput!
+  create: SetCreateWithoutUserInput!
+}
+
+input SetWhereInput {
+  """Logical AND on all given filters."""
+  AND: [SetWhereInput!]
+
+  """Logical OR on all given filters."""
+  OR: [SetWhereInput!]
+
+  """Logical NOT on all given filters combined by AND."""
+  NOT: [SetWhereInput!]
+  id: ID
+
+  """All values that are not equal to given value."""
+  id_not: ID
+
+  """All values that are contained in given list."""
+  id_in: [ID!]
+
+  """All values that are not contained in given list."""
+  id_not_in: [ID!]
+
+  """All values less than the given value."""
+  id_lt: ID
+
+  """All values less than or equal the given value."""
+  id_lte: ID
+
+  """All values greater than the given value."""
+  id_gt: ID
+
+  """All values greater than or equal the given value."""
+  id_gte: ID
+
+  """All values containing the given string."""
+  id_contains: ID
+
+  """All values not containing the given string."""
+  id_not_contains: ID
+
+  """All values starting with the given string."""
+  id_starts_with: ID
+
+  """All values not starting with the given string."""
+  id_not_starts_with: ID
+
+  """All values ending with the given string."""
+  id_ends_with: ID
+
+  """All values not ending with the given string."""
+  id_not_ends_with: ID
+  updatedAt: DateTime
+
+  """All values that are not equal to given value."""
+  updatedAt_not: DateTime
+
+  """All values that are contained in given list."""
+  updatedAt_in: [DateTime!]
+
+  """All values that are not contained in given list."""
+  updatedAt_not_in: [DateTime!]
+
+  """All values less than the given value."""
+  updatedAt_lt: DateTime
+
+  """All values less than or equal the given value."""
+  updatedAt_lte: DateTime
+
+  """All values greater than the given value."""
+  updatedAt_gt: DateTime
+
+  """All values greater than or equal the given value."""
+  updatedAt_gte: DateTime
+  createdAt: DateTime
+
+  """All values that are not equal to given value."""
+  createdAt_not: DateTime
+
+  """All values that are contained in given list."""
+  createdAt_in: [DateTime!]
+
+  """All values that are not contained in given list."""
+  createdAt_not_in: [DateTime!]
+
+  """All values less than the given value."""
+  createdAt_lt: DateTime
+
+  """All values less than or equal the given value."""
+  createdAt_lte: DateTime
+
+  """All values greater than the given value."""
+  createdAt_gt: DateTime
+
+  """All values greater than or equal the given value."""
+  createdAt_gte: DateTime
+  reps: Int
+
+  """All values that are not equal to given value."""
+  reps_not: Int
+
+  """All values that are contained in given list."""
+  reps_in: [Int!]
+
+  """All values that are not contained in given list."""
+  reps_not_in: [Int!]
+
+  """All values less than the given value."""
+  reps_lt: Int
+
+  """All values less than or equal the given value."""
+  reps_lte: Int
+
+  """All values greater than the given value."""
+  reps_gt: Int
+
+  """All values greater than or equal the given value."""
+  reps_gte: Int
+  weight: Float
+
+  """All values that are not equal to given value."""
+  weight_not: Float
+
+  """All values that are contained in given list."""
+  weight_in: [Float!]
+
+  """All values that are not contained in given list."""
+  weight_not_in: [Float!]
+
+  """All values less than the given value."""
+  weight_lt: Float
+
+  """All values less than or equal the given value."""
+  weight_lte: Float
+
+  """All values greater than the given value."""
+  weight_gt: Float
+
+  """All values greater than or equal the given value."""
+  weight_gte: Float
+  distance: Float
+
+  """All values that are not equal to given value."""
+  distance_not: Float
+
+  """All values that are contained in given list."""
+  distance_in: [Float!]
+
+  """All values that are not contained in given list."""
+  distance_not_in: [Float!]
+
+  """All values less than the given value."""
+  distance_lt: Float
+
+  """All values less than or equal the given value."""
+  distance_lte: Float
+
+  """All values greater than the given value."""
+  distance_gt: Float
+
+  """All values greater than or equal the given value."""
+  distance_gte: Float
+  time: Float
+
+  """All values that are not equal to given value."""
+  time_not: Float
+
+  """All values that are contained in given list."""
+  time_in: [Float!]
+
+  """All values that are not contained in given list."""
+  time_not_in: [Float!]
+
+  """All values less than the given value."""
+  time_lt: Float
+
+  """All values less than or equal the given value."""
+  time_lte: Float
+
+  """All values greater than the given value."""
+  time_gt: Float
+
+  """All values greater than or equal the given value."""
+  time_gte: Float
+  user: UserWhereInput
+  session: SessionWhereInput
+  exercise: ExerciseWhereInput
+}
+
+input SetWhereUniqueInput {
   id: ID
 }
 
@@ -685,6 +1669,7 @@ type Subscription {
   user(where: UserSubscriptionWhereInput): UserSubscriptionPayload
   session(where: SessionSubscriptionWhereInput): SessionSubscriptionPayload
   exercise(where: ExerciseSubscriptionWhereInput): ExerciseSubscriptionPayload
+  set(where: SetSubscriptionWhereInput): SetSubscriptionPayload
 }
 
 type User implements Node {
@@ -694,6 +1679,7 @@ type User implements Node {
   password: String!
   sessions(where: SessionWhereInput, orderBy: SessionOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Session!]
   exercises(where: ExerciseWhereInput, orderBy: ExerciseOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Exercise!]
+  sets(where: SetWhereInput, orderBy: SetOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Set!]
   updatedAt: DateTime!
   createdAt: DateTime!
 }
@@ -709,11 +1695,13 @@ type UserConnection {
 }
 
 input UserCreateInput {
+  id: ID
   name: String!
   email: String!
   password: String!
   sessions: SessionCreateManyWithoutUserInput
   exercises: ExerciseCreateManyWithoutUserInput
+  sets: SetCreateManyWithoutUserInput
 }
 
 input UserCreateOneWithoutExercisesInput {
@@ -726,17 +1714,35 @@ input UserCreateOneWithoutSessionsInput {
   connect: UserWhereUniqueInput
 }
 
+input UserCreateOneWithoutSetsInput {
+  create: UserCreateWithoutSetsInput
+  connect: UserWhereUniqueInput
+}
+
 input UserCreateWithoutExercisesInput {
+  id: ID
   name: String!
   email: String!
   password: String!
   sessions: SessionCreateManyWithoutUserInput
+  sets: SetCreateManyWithoutUserInput
 }
 
 input UserCreateWithoutSessionsInput {
+  id: ID
   name: String!
   email: String!
   password: String!
+  exercises: ExerciseCreateManyWithoutUserInput
+  sets: SetCreateManyWithoutUserInput
+}
+
+input UserCreateWithoutSetsInput {
+  id: ID
+  name: String!
+  email: String!
+  password: String!
+  sessions: SessionCreateManyWithoutUserInput
   exercises: ExerciseCreateManyWithoutUserInput
 }
 
@@ -816,22 +1822,34 @@ input UserUpdateInput {
   password: String
   sessions: SessionUpdateManyWithoutUserInput
   exercises: ExerciseUpdateManyWithoutUserInput
+  sets: SetUpdateManyWithoutUserInput
 }
 
-input UserUpdateOneWithoutExercisesInput {
+input UserUpdateManyMutationInput {
+  name: String
+  email: String
+  password: String
+}
+
+input UserUpdateOneRequiredWithoutExercisesInput {
   create: UserCreateWithoutExercisesInput
   connect: UserWhereUniqueInput
-  delete: Boolean
   update: UserUpdateWithoutExercisesDataInput
   upsert: UserUpsertWithoutExercisesInput
 }
 
-input UserUpdateOneWithoutSessionsInput {
+input UserUpdateOneRequiredWithoutSessionsInput {
   create: UserCreateWithoutSessionsInput
   connect: UserWhereUniqueInput
-  delete: Boolean
   update: UserUpdateWithoutSessionsDataInput
   upsert: UserUpsertWithoutSessionsInput
+}
+
+input UserUpdateOneRequiredWithoutSetsInput {
+  create: UserCreateWithoutSetsInput
+  connect: UserWhereUniqueInput
+  update: UserUpdateWithoutSetsDataInput
+  upsert: UserUpsertWithoutSetsInput
 }
 
 input UserUpdateWithoutExercisesDataInput {
@@ -839,12 +1857,22 @@ input UserUpdateWithoutExercisesDataInput {
   email: String
   password: String
   sessions: SessionUpdateManyWithoutUserInput
+  sets: SetUpdateManyWithoutUserInput
 }
 
 input UserUpdateWithoutSessionsDataInput {
   name: String
   email: String
   password: String
+  exercises: ExerciseUpdateManyWithoutUserInput
+  sets: SetUpdateManyWithoutUserInput
+}
+
+input UserUpdateWithoutSetsDataInput {
+  name: String
+  email: String
+  password: String
+  sessions: SessionUpdateManyWithoutUserInput
   exercises: ExerciseUpdateManyWithoutUserInput
 }
 
@@ -856,6 +1884,11 @@ input UserUpsertWithoutExercisesInput {
 input UserUpsertWithoutSessionsInput {
   update: UserUpdateWithoutSessionsDataInput!
   create: UserCreateWithoutSessionsInput!
+}
+
+input UserUpsertWithoutSetsInput {
+  update: UserUpdateWithoutSetsDataInput!
+  create: UserCreateWithoutSetsInput!
 }
 
 input UserWhereInput {
@@ -1077,6 +2110,9 @@ input UserWhereInput {
   exercises_every: ExerciseWhereInput
   exercises_some: ExerciseWhereInput
   exercises_none: ExerciseWhereInput
+  sets_every: SetWhereInput
+  sets_some: SetWhereInput
+  sets_none: SetWhereInput
 }
 
 input UserWhereUniqueInput {
