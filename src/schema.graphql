@@ -29,7 +29,7 @@ type Mutation {
   createUser(data: CreateUserInput): AuthPayload!
   deleteUser: User!
   updateUser(data: updateUserInput!): User!
-  createSession(data: CreatSessionInput): Session!
+  createSession(data: CreateSessionInput): Session!
   deleteSession(id: ID!): Session!
   updateSession(id: ID!, data: updateSessionInput!): Session!
   createExercise(data: CreateExerciseInput): Exercise!
@@ -62,7 +62,7 @@ input updateUserInput {
   email: String
 }
 
-input CreatSessionInput {
+input CreateSessionInput {
   date: String!
 }
 
@@ -70,9 +70,14 @@ input updateSessionInput {
   date: String
 }
 
+# TODO: change to left leg right leg
 enum ExerciseName {
-  LEG_PRESS
-  HAMSTRING_CURL
+  LEG_PRESS_RIGHT_LEG
+  LEG_PRESS_LEFT_LEG
+  LEG_PRESS_BOTH_LEGS
+  HAMSTRING_CURL_RIGHT_LEG
+  HAMSTRING_CURL_LEFT_LEG
+  HAMSTRING_CURL_BOTH_LEGS
   TREADMILL
   SPINNING_BIKE
   SQUAT

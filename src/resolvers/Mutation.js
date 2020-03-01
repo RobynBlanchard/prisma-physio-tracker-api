@@ -5,7 +5,16 @@ import hashPassword from '../utils/hashPassword';
 
 const TIME_DISTANCE_TYPES = ['TREADMILL', 'SPINNING_BIKE'];
 
-const REP_WEIGHT_TYPES = ['LEG_PRESS', 'HAMSTRING_CURL', 'SQUAT', 'DEADLIFT'];
+const REP_WEIGHT_TYPES = [
+  'LEG_PRESS_RIGHT_LEG',
+  'LEG_PRESS_LEFT_LEG',
+  'LEG_PRESS_BOTH_LEGS',
+  'HAMSTRING_CURL_RIGHT_LEG',
+  'HAMSTRING_CURL_LEFT_LEG',
+  'HAMSTRING_CURL_BOTH_LEGS',
+  'SQUAT',
+  'DEADLIFT'
+];
 
 const Mutation = {
   async login(parent, args, { prisma }, info) {
@@ -206,29 +215,36 @@ const Mutation = {
     };
 
     // TODO add this logic to update
-    if (TIME_DISTANCE_TYPES.includes(exercise.name)) {
-      if (args.data.time && args.data.distance) {
-        opArgs.time = args.data.time;
-        opArgs.distance = args.data.distance;
-      } else {
-        throw new Error(
-          `when adding set for ${exercise.name} you must add distance and time`
-        );
+    if (
+      TIME_DISTANCE_TYPES.includes(exercise.name) ||
+      REP_WEIGHT_TYPES.includes(exercise.name)
+    ) {
+      if (TIME_DISTANCE_TYPES.includes(exercise.name)) {
+        if (args.data.time && args.data.distance) {
+          opArgs.time = args.data.time;
+          opArgs.distance = args.data.distance;
+        } else {
+          throw new Error(
+            `when adding set for ${exercise.name} you must add distance and time`
+          );
+        }
       }
-    }
 
-    if (REP_WEIGHT_TYPES.includes(exercise.name)) {
-      if (args.data.reps && args.data.weight) {
-        opArgs.reps = args.data.reps;
-        opArgs.weight = args.data.weight;
-      } else {
-        throw new Error(
-          `when adding set for ${exercise.name} you must add reps and weight`
-        );
+      if (REP_WEIGHT_TYPES.includes(exercise.name)) {
+        if (args.data.reps && args.data.weight) {
+          opArgs.reps = args.data.reps;
+          opArgs.weight = args.data.weight;
+        } else {
+          throw new Error(
+            `when adding set for ${exercise.name} you must add reps and weight`
+          );
+        }
       }
-    }
 
-    return prisma.mutation.createSet({ data: opArgs }, info);
+      return prisma.mutation.createSet({ data: opArgs }, info);
+    } else {
+      throw new Error('Exercise name not included');
+    }
   },
   async deleteSet(parent, args, { prisma, request }, info) {
     const userId = getUserId(request);
