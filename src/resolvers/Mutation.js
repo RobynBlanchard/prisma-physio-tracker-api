@@ -25,13 +25,13 @@ const Mutation = {
     });
 
     if (!user) {
-      throw new Error('User does not exist for that email');
+      throw new Error('Unable to login');
     }
 
     const isMatch = await bcrypt.compare(args.data.password, user.password);
 
     if (!isMatch) {
-      throw new Error('Wrong password');
+      throw new Error('Unable to login');
     }
 
     return {
@@ -39,21 +39,22 @@ const Mutation = {
       token: generateToken(user.id)
     };
   },
+
   async createUser(parent, args, { prisma }, info) {
-    const userExists = await prisma.query.user({
-      where: {
-        email: args.data.email
-      }
+    const userExists = await prisma.exists.User({
+      email: args.data.email
     });
 
     if (userExists) {
-      throw new Error('User with that email already exists');
+      throw new Error('Unable to create User, email taken');
     }
 
     const password = await hashPassword(args.data.password);
-
-    const user = prisma.mutation.createUser({
-      data: { ...args.data, password }
+    const user = await prisma.mutation.createUser({
+      data: {
+        ...args.data,
+        password
+      }
     });
 
     return {
@@ -83,6 +84,7 @@ const Mutation = {
       info
     );
   },
+
   createSession(parent, args, { prisma, request }, info) {
     const userId = getUserId(request);
 
