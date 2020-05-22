@@ -271,8 +271,8 @@ const Mutation = {
       info
     );
   },
-  async updateSet(parent, args, { prisma, req }, info) {
-    const userId = getUserId(req);
+  async updateSet(parent, args, { prisma, request }, info) {
+    const userId = getUserId(request);
 
     // TODO validation
 
