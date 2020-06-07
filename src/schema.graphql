@@ -70,22 +70,10 @@ input updateSessionInput {
   date: String
 }
 
-enum ExerciseName {
-  LEG_PRESS_RIGHT_LEG
-  LEG_PRESS_LEFT_LEG
-  LEG_PRESS_BOTH_LEGS
-  HAMSTRING_CURL_RIGHT_LEG
-  HAMSTRING_CURL_LEFT_LEG
-  HAMSTRING_CURL_BOTH_LEGS
-  TREADMILL
-  SPINNING_BIKE
-  SQUAT
-  DEADLIFT
-}
-
 input CreateExerciseInput {
-  name: ExerciseName!
+  name: String!
   session: ID!
+  metrics: [SetMetrics!]!
 }
 
 input updateExerciseInput {
@@ -128,11 +116,25 @@ type Session {
   exercises: [Exercise!]!
 }
 
+enum SetMetrics {
+  REPS
+  WEIGHT
+  TIME
+  DISTANCE
+}
+
+# eg to allow for custom exercise where set type is not garunteed
+# eg bosu -> just want number of reps
+# 
+
 type Exercise {
   id: ID!
-  name: ExerciseName!
+  name: String!
   user: User!
   session: Session!
+  metrics: [SetMetrics!]!
+
+  # set columns
 }
 
 # Hack to get around prisma not implementing interfaces yet

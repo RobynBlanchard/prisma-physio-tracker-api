@@ -1,5 +1,5 @@
 # source: http://localhost:4466
-# timestamp: Sun Mar 01 2020 17:27:58 GMT+0000 (Greenwich Mean Time)
+# timestamp: Tue Jun 02 2020 21:56:56 GMT+0100 (British Summer Time)
 
 type AggregateExercise {
   count: Int!
@@ -26,10 +26,11 @@ scalar DateTime
 
 type Exercise implements Node {
   id: ID!
-  name: ExerciseName!
+  name: String!
   user: User!
   session: Session!
   sets(where: SetWhereInput, orderBy: SetOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Set!]
+  metrics: [SetMetrics!]!
   updatedAt: DateTime!
   createdAt: DateTime!
 }
@@ -46,7 +47,8 @@ type ExerciseConnection {
 
 input ExerciseCreateInput {
   id: ID
-  name: ExerciseName!
+  name: String!
+  metrics: ExerciseCreatemetricsInput
   user: UserCreateOneWithoutExercisesInput!
   session: SessionCreateOneWithoutExercisesInput!
   sets: SetCreateManyWithoutExerciseInput
@@ -62,6 +64,10 @@ input ExerciseCreateManyWithoutUserInput {
   connect: [ExerciseWhereUniqueInput!]
 }
 
+input ExerciseCreatemetricsInput {
+  set: [SetMetrics!]
+}
+
 input ExerciseCreateOneWithoutSetsInput {
   create: ExerciseCreateWithoutSetsInput
   connect: ExerciseWhereUniqueInput
@@ -69,21 +75,24 @@ input ExerciseCreateOneWithoutSetsInput {
 
 input ExerciseCreateWithoutSessionInput {
   id: ID
-  name: ExerciseName!
+  name: String!
+  metrics: ExerciseCreatemetricsInput
   user: UserCreateOneWithoutExercisesInput!
   sets: SetCreateManyWithoutExerciseInput
 }
 
 input ExerciseCreateWithoutSetsInput {
   id: ID
-  name: ExerciseName!
+  name: String!
+  metrics: ExerciseCreatemetricsInput
   user: UserCreateOneWithoutExercisesInput!
   session: SessionCreateOneWithoutExercisesInput!
 }
 
 input ExerciseCreateWithoutUserInput {
   id: ID
-  name: ExerciseName!
+  name: String!
+  metrics: ExerciseCreatemetricsInput
   session: SessionCreateOneWithoutExercisesInput!
   sets: SetCreateManyWithoutExerciseInput
 }
@@ -95,19 +104,6 @@ type ExerciseEdge {
 
   """A cursor for use in pagination."""
   cursor: String!
-}
-
-enum ExerciseName {
-  LEG_PRESS_RIGHT_LEG
-  LEG_PRESS_LEFT_LEG
-  LEG_PRESS_BOTH_LEGS
-  HAMSTRING_CURL_RIGHT_LEG
-  HAMSTRING_CURL_LEFT_LEG
-  HAMSTRING_CURL_BOTH_LEGS
-  TREADMILL
-  SPINNING_BIKE
-  SQUAT
-  DEADLIFT
 }
 
 enum ExerciseOrderByInput {
@@ -123,7 +119,8 @@ enum ExerciseOrderByInput {
 
 type ExercisePreviousValues {
   id: ID!
-  name: ExerciseName!
+  name: String!
+  metrics: [SetMetrics!]!
   updatedAt: DateTime!
   createdAt: DateTime!
 }
@@ -177,16 +174,46 @@ input ExerciseScalarWhereInput {
 
   """All values not ending with the given string."""
   id_not_ends_with: ID
-  name: ExerciseName
+  name: String
 
   """All values that are not equal to given value."""
-  name_not: ExerciseName
+  name_not: String
 
   """All values that are contained in given list."""
-  name_in: [ExerciseName!]
+  name_in: [String!]
 
   """All values that are not contained in given list."""
-  name_not_in: [ExerciseName!]
+  name_not_in: [String!]
+
+  """All values less than the given value."""
+  name_lt: String
+
+  """All values less than or equal the given value."""
+  name_lte: String
+
+  """All values greater than the given value."""
+  name_gt: String
+
+  """All values greater than or equal the given value."""
+  name_gte: String
+
+  """All values containing the given string."""
+  name_contains: String
+
+  """All values not containing the given string."""
+  name_not_contains: String
+
+  """All values starting with the given string."""
+  name_starts_with: String
+
+  """All values not starting with the given string."""
+  name_not_starts_with: String
+
+  """All values ending with the given string."""
+  name_ends_with: String
+
+  """All values not ending with the given string."""
+  name_not_ends_with: String
   updatedAt: DateTime
 
   """All values that are not equal to given value."""
@@ -271,18 +298,21 @@ input ExerciseSubscriptionWhereInput {
 }
 
 input ExerciseUpdateInput {
-  name: ExerciseName
+  name: String
+  metrics: ExerciseUpdatemetricsInput
   user: UserUpdateOneRequiredWithoutExercisesInput
   session: SessionUpdateOneRequiredWithoutExercisesInput
   sets: SetUpdateManyWithoutExerciseInput
 }
 
 input ExerciseUpdateManyDataInput {
-  name: ExerciseName
+  name: String
+  metrics: ExerciseUpdatemetricsInput
 }
 
 input ExerciseUpdateManyMutationInput {
-  name: ExerciseName
+  name: String
+  metrics: ExerciseUpdatemetricsInput
 }
 
 input ExerciseUpdateManyWithoutSessionInput {
@@ -314,6 +344,10 @@ input ExerciseUpdateManyWithWhereNestedInput {
   data: ExerciseUpdateManyDataInput!
 }
 
+input ExerciseUpdatemetricsInput {
+  set: [SetMetrics!]
+}
+
 input ExerciseUpdateOneRequiredWithoutSetsInput {
   create: ExerciseCreateWithoutSetsInput
   connect: ExerciseWhereUniqueInput
@@ -322,19 +356,22 @@ input ExerciseUpdateOneRequiredWithoutSetsInput {
 }
 
 input ExerciseUpdateWithoutSessionDataInput {
-  name: ExerciseName
+  name: String
+  metrics: ExerciseUpdatemetricsInput
   user: UserUpdateOneRequiredWithoutExercisesInput
   sets: SetUpdateManyWithoutExerciseInput
 }
 
 input ExerciseUpdateWithoutSetsDataInput {
-  name: ExerciseName
+  name: String
+  metrics: ExerciseUpdatemetricsInput
   user: UserUpdateOneRequiredWithoutExercisesInput
   session: SessionUpdateOneRequiredWithoutExercisesInput
 }
 
 input ExerciseUpdateWithoutUserDataInput {
-  name: ExerciseName
+  name: String
+  metrics: ExerciseUpdatemetricsInput
   session: SessionUpdateOneRequiredWithoutExercisesInput
   sets: SetUpdateManyWithoutExerciseInput
 }
@@ -415,16 +452,46 @@ input ExerciseWhereInput {
 
   """All values not ending with the given string."""
   id_not_ends_with: ID
-  name: ExerciseName
+  name: String
 
   """All values that are not equal to given value."""
-  name_not: ExerciseName
+  name_not: String
 
   """All values that are contained in given list."""
-  name_in: [ExerciseName!]
+  name_in: [String!]
 
   """All values that are not contained in given list."""
-  name_not_in: [ExerciseName!]
+  name_not_in: [String!]
+
+  """All values less than the given value."""
+  name_lt: String
+
+  """All values less than or equal the given value."""
+  name_lte: String
+
+  """All values greater than the given value."""
+  name_gt: String
+
+  """All values greater than or equal the given value."""
+  name_gte: String
+
+  """All values containing the given string."""
+  name_contains: String
+
+  """All values not containing the given string."""
+  name_not_contains: String
+
+  """All values starting with the given string."""
+  name_starts_with: String
+
+  """All values not starting with the given string."""
+  name_not_starts_with: String
+
+  """All values ending with the given string."""
+  name_ends_with: String
+
+  """All values not ending with the given string."""
+  name_not_ends_with: String
   updatedAt: DateTime
 
   """All values that are not equal to given value."""
@@ -1105,6 +1172,13 @@ type SetEdge {
 
   """A cursor for use in pagination."""
   cursor: String!
+}
+
+enum SetMetrics {
+  REPS
+  WEIGHT
+  TIME
+  DISTANCE
 }
 
 enum SetOrderByInput {
